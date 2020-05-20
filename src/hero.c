@@ -204,19 +204,6 @@ void animer_hero(hero *h, state movement, character c)
 				h->sprite.curframe += 1;
 			}
 		}
-		/*else if (movement == JUMP)
-		{
-			h->sprite.frame.y = 2 * h->sprite.frame.h;
-			h->sprite.frame.x = h->sprite.frame.w;
-			h->state = JUMP;
-		}
-
-		else if (movement = FALLING)
-		{
-			h->sprite.frame.y = 2 * h->sprite.frame.h;
-			h->sprite.frame.x = 2 * h->sprite.frame.w;
-			h->state = FALLING;
-		}*/
 	}
 }
 
@@ -270,7 +257,7 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 			}
 			if (b->posCamera.x<0)
 				b->posCamera.x=1;
-			if (!b->posCamera.y<0)
+			if (b->posCamera.y<0)
 				b->posCamera.y=1;
 
 			Uint8 *keystates = SDL_GetKeyState(NULL);

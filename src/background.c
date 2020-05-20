@@ -18,8 +18,6 @@ void initialiser_background(background *b)
 	//optimized image loading
 	//b->image = SDL_DisplayFormat(b->image);
 	//b->background_mask = SDL_DisplayFormat(b->background_mask);
-
-	
 }
 
 void afficher_background(background *b, SDL_Surface *screen)
@@ -34,72 +32,87 @@ void free_background(background *b)
 	SDL_FreeSurface(b->background_mask);
 }
 
-void initialiser_platforme(platforme *p,int x,int y)
+void initialiser_platforme(platforme *p, int x, int y)
 {
 	p->image = IMG_Load("../img/background/platform.png");
 	p->position.x = x;
 	p->position.y = y;
-	p->image=SDL_DisplayFormat(p->image);
+	p->image = SDL_DisplayFormat(p->image);
 }
 
-void animer_platforme(platforme *p)
+void animer_platforme(platforme *p, int x)
 {
-	static int tempsActuel=0;
-	static int tempsPrecedent=0;
-	static int sens=1;
-
-	tempsActuel = SDL_GetTicks();
+	static int tempsActuel = 0;
+	static int tempsPrecedent = 0;
+	static int sens = 1;
+	if (x == 0)
+	{
+		tempsActuel = SDL_GetTicks();
 		if (tempsActuel - tempsPrecedent > 10)
 		{
-			p->position.x += 1*sens;
+			p->position.x += 1 * sens;
 			tempsPrecedent = tempsActuel;
 		}
-		if (p->position.x >=1380)
-			sens=-1;
-		if (p->position.x<=1180)
-			sens=1;
+		if (p->position.x >= 1380)
+			sens = -1;
+		if (p->position.x <= 1180)
+			sens = 1;
+	}
+	else if (x == 1)
+	{
+		tempsActuel = SDL_GetTicks();
+		if (tempsActuel - tempsPrecedent > 10)
+		{
+			p->position.y += 1 * sens;
+			tempsPrecedent = tempsActuel;
+		}
+		if (p->position.y >= 1380)
+			sens = -1;
+		if (p->position.y <= 1180)
+			sens = 1;
+	}
 }
 
-void afficher_platforme(platforme p,background b,SDL_Surface *ecran)
+void afficher_platforme(platforme p, background b, SDL_Surface *ecran)
 {
 	SDL_Rect pos;
-	pos.x=p.position.x-b.posCamera.x;
-	pos.y=p.position.y-b.posCamera.y;
-	SDL_BlitSurface(p.image,NULL,ecran,&pos);
+	pos.x = p.position.x - b.posCamera.x;
+	pos.y = p.position.y - b.posCamera.y;
+	SDL_BlitSurface(p.image, NULL, ecran, &pos);
 }
 
-void initialiser_text(text *i,char message[40],int x,int y,int size)
+void initialiser_text(text *i, char message[40], int x, int y, int size)
 {
 	TTF_Init();
-	i->color.r=255;
-	i->color.g=255;
-	i->color.b=255;
-	i->font=TTF_OpenFont("../fonts/chalk_2.ttf", size);
-	i->text=TTF_RenderText_Blended(i->font, message, i->color);
-	i->position.x=x;
-	i->position.y=y;
+	i->color.r = 255;
+	i->color.g = 255;
+	i->color.b = 255;
+	i->font = TTF_OpenFont("../fonts/chalk_2.ttf", size);
+	i->text = TTF_RenderText_Blended(i->font, message, i->color);
+	i->position.x = x;
+	i->position.y = y;
 }
-void afficher_text(text i,background b,SDL_Surface *ecran)
+void afficher_text(text i, background b, SDL_Surface *ecran)
 {
 	SDL_Rect pos;
-	pos.x=i.position.x-b.posCamera.x;
-	pos.y=i.position.y-b.posCamera.y;
+	pos.x = i.position.x - b.posCamera.x;
+	pos.y = i.position.y - b.posCamera.y;
 	SDL_BlitSurface(i.text, NULL, ecran, &pos);
 }
 
-void initialiser_text_2(text *i,int x,int y,int size)
+void initialiser_text_2(text *i, int x, int y, int size)
 {
 	TTF_Init();
-	i->color.r=255;
-	i->color.g=255;
-	i->color.b=255;
-	i->position.x=x;
-	i->position.y=y;
-	i->font=TTF_OpenFont("../fonts/chalk_2.ttf", size);
+	i->color.r = 255;
+	i->color.g = 255;
+	i->color.b = 255;
+	i->position.x = x;
+	i->position.y = y;
+	i->font = TTF_OpenFont("../fonts/chalk_2.ttf", size);
 }
-void afficher_text_2(text i,SDL_Surface *ecran,char message[20])
+void afficher_text_2(text i, SDL_Surface *ecran, char message[20])
 {
-	
-	i.text=TTF_RenderText_Blended(i.font, message, i.color);
+
+	i.text = TTF_RenderText_Blended(i.font, message, i.color);
 	SDL_BlitSurface(i.text, NULL, ecran, &i.position);
 }

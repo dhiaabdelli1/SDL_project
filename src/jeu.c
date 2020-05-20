@@ -43,6 +43,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 		Mix_PauseMusic();
 	if (p->fullscreen)
 		SDL_WM_ToggleFullScreen(ecran);
+	int passage_boucle=0;
 
 	while (Jcontinuer)
 	{
@@ -74,7 +75,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 		animer_entite(&enemie);
 		animer_hero(&safwen, safwen.state, c);
 		animer_pu(&coin_1, &coin_2);
-		animer_platforme(&platforme);
+		animer_platforme(&platforme,0);
 
 		afficher_background(&background, ecran);
 		afficher_platforme(platforme, background, ecran);
@@ -86,14 +87,16 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 
 		if (Jcontinuer == 0 && safwen.vie_hero.nb_vie != 0)
 			(*etat) = EXIT;
-		if (safwen.vie_hero.nb_vie == 0 || safwen.position.y >= 2600)
+		
+		if (safwen.vie_hero.nb_vie == 0 || abs(safwen.position.y + safwen.sprite.image->h - background.image->h-background.posCamera.h) < 170)
 		{
 			animer_hero(&safwen, DIE, c);
+			passage_boucle++;
 			SDL_SetAlpha(black, SDL_SRCALPHA, 120);
 			SDL_BlitSurface(black, NULL, ecran, &position_black);
 			SDL_BlitSurface(game_over_txt.text, NULL, ecran, &game_over_txt.position);
 
-			if (safwen.state != DIE)
+			if (passage_boucle==15)
 			{
 				safwen.sprite.image = NULL;
 				SDL_Delay(2000);

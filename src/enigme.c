@@ -10,7 +10,7 @@ void enigme_math(SDL_Surface *screen, enigme *E)
     SDL_EnableKeyRepeat(0, 0);
     while (Econtinue)
     {
-        while (SDL_PollEvent(&event))
+        while (SDL_PollEvent(&event)) 
         {
             switch (event.type)
             {
