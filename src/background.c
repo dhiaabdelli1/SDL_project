@@ -16,7 +16,7 @@ void initialiser_background(background *b)
 	b->position_background_mask.h = SCREEN_HEIGHT;
 
 	//optimized image loading
-	b->image = SDL_DisplayFormat(b->image);
+	//b->image = SDL_DisplayFormat(b->image);
 	//b->background_mask = SDL_DisplayFormat(b->background_mask);
 
 	

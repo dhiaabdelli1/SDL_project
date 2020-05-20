@@ -102,8 +102,10 @@ void CollisionParfaite(hero *h, background b,platforme p)
 	else
 		h->collision_DOWN = 1;
 
-	if (!(h->position.y > p.position.y + p.image->h || h->position.y + h->sprite.frame.h < p.position.y || (h->position.x > p.position.x + p.image->w || h->position.x + h->sprite.frame.x <= p.position.x)))
+	if (!(h->position.y > p.position.y + p.image->h || h->position.y + h->sprite.frame.h < p.position.y || h->position.x > p.position.x + p.image->w || h->position.x <= p.position.x))
 		h->collision_DOWN = 1;
+	if (!(abs(h->position.y - p.position.y - p.image->h)>5 || h->position.x > p.position.x + p.image->w || h->position.x <= p.position.x))
+		h->collision_UP=1;
 }
 void Collision_platforme(hero *h, SDL_Surface *r, SDL_Rect pos_rectangle)
 {

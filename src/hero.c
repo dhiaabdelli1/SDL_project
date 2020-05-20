@@ -60,10 +60,6 @@ void initialiser_hero(hero *h, char name[20])
 	h->score_hero.texte_score = TTF_RenderText_Blended(h->score_hero.score_font, score_str, h->score_hero.couleurNoire);
 	h->score_hero.position_texte.x = SCREEN_WIDTH - h->vie_hero.heart->w;
 	h->score_hero.position_texte.y = 10;
-
-	//optimized image loading
-	h->sprite.image = SDL_DisplayFormat(h->sprite.image);
-	
 }
 
 void afficher_hero(hero h, SDL_Surface *screen, background b)
@@ -108,6 +104,7 @@ void animer_hero(hero *h, state movement, character c)
 {
 	if (h->sprite.image != NULL)
 	{
+		static int x = 0;
 		static int tempsActuel = 0;
 		static int tempsPrecedent = 0;
 
@@ -149,21 +146,45 @@ void animer_hero(hero *h, state movement, character c)
 			h->sprite.maxframe = 3;
 			h->state = DIE;
 			break;
+		case JUMP:
+			h->sprite.frame.y = 2 * h->sprite.frame.h;
+			h->sprite.frame.x = h->sprite.frame.w;
+			h->state = JUMP;
+			break;
+		case FALLING:
+			h->sprite.frame.y = 2 * h->sprite.frame.h;
+			h->sprite.frame.x = 2 * h->sprite.frame.w;
+			h->state = FALLING;
+			break;
 		}
 
 		if (c == SAFWEN)
 		{
-			if (h->direction == RIGHT)
+			if (h->direction == RIGHT && x != 1)
+			{
 				h->sprite.image = IMG_Load("../img/hero/safwen_right.png");
-			if (h->direction == LEFT)
+				x = 1;
+			}
+
+			else if (h->direction == LEFT && x != 2)
+			{
 				h->sprite.image = IMG_Load("../img/hero/safwen_left.png");
+				x = 2;
+			}
 		}
 		else if (c == OMAR)
 		{
-			if (h->direction == RIGHT)
+			if (h->direction == RIGHT && x != 3)
+			{
 				h->sprite.image = IMG_Load("../img/hero/omar_right.png");
-			if (h->direction == LEFT)
+				x = 3;
+			}
+
+			if (h->direction == LEFT && x != 4)
+			{
 				h->sprite.image = IMG_Load("../img/hero/omar_left.png");
+				x = 4;
+			}
 		}
 
 		tempsActuel = SDL_GetTicks();
@@ -183,19 +204,19 @@ void animer_hero(hero *h, state movement, character c)
 				h->sprite.curframe += 1;
 			}
 		}
-		else if (movement==JUMP)
+		/*else if (movement == JUMP)
 		{
 			h->sprite.frame.y = 2 * h->sprite.frame.h;
-			h->sprite.frame.x=h->sprite.frame.w;
-			h->state=JUMP;
+			h->sprite.frame.x = h->sprite.frame.w;
+			h->state = JUMP;
 		}
-			
-		else if (movement=FALLING)
+
+		else if (movement = FALLING)
 		{
 			h->sprite.frame.y = 2 * h->sprite.frame.h;
-			h->sprite.frame.x=2*h->sprite.frame.w;
-			h->state=FALLING;
-		}
+			h->sprite.frame.x = 2 * h->sprite.frame.w;
+			h->state = FALLING;
+		}*/
 	}
 }
 
@@ -208,7 +229,7 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 {
 	if (h->sprite.image != NULL)
 	{
-		static int timeStepMs = 20;
+		int timeStepMs = 10; //if 20 it ruins mvt for some reason
 		static int timeLastMs, timeAccumulatedMs, timeDeltaMs, timeCurrentMs = 0;
 		static int current_ground_position;
 		static float accel = 0;
@@ -233,16 +254,24 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 		if (h->collision_DOWN)
 		{
 			h->current_ground_position = h->position.y;
-			if (h->state!=KICK && h->state!=PUNCH)
-				h->state=IDLE;
+			if (h->state != KICK && h->state != PUNCH)
+				h->state = IDLE;
 		}
 
 		if (timeAccumulatedMs >= timeStepMs)
 		{
-			if (b->posCamera.x < b->image->w - SCREEN_WIDTH && b->posCamera.x)
+			if (b->posCamera.x < b->image->w - SCREEN_WIDTH)
+			{
 				b->posCamera.x = (h->position.x + 5 * h->sprite.frame.w) - SCREEN_WIDTH;
-			if (b->posCamera.y < b->image->h - SCREEN_HEIGHT && b->posCamera.y)
+			}
+			if (b->posCamera.y < b->image->h - SCREEN_HEIGHT)
+			{
 				b->posCamera.y = (h->position.y + 3 * h->sprite.frame.h) - SCREEN_HEIGHT;
+			}
+			if (b->posCamera.x<0)
+				b->posCamera.x=1;
+			if (!b->posCamera.y<0)
+				b->posCamera.y=1;
 
 			Uint8 *keystates = SDL_GetKeyState(NULL);
 			if (h->position.y > h->current_ground_position - JUMP_HEIGHT && tanguiza == 0 && !h->collision_UP)
