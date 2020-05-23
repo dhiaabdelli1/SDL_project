@@ -17,24 +17,28 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 	enigme enigme_m;
 	power_up coin_1, coin_2;
 	platforme platforme;
-	text instruction_1, instruction_2, game_over_txt;
+	text game_over_txt;
+	dialogue dialogue;
+	text instructions[4];
+	power_up coins[2];
 
+	SDL_Surface *black = IMG_Load("../img/black.jpg");
 
-
-	SDL_Surface *black=IMG_Load("../img/black.jpg");
 	SDL_Rect position_black;
-	position_black.x=0;
-	position_black.y=0;
+	position_black.x = 0;
+	position_black.y = 0;
 
+	initialiser_dialogue(&dialogue,ecran);
 	initialiser_background(&background);
 	initialiser_entite(&enemie);
 	initenigme(&enigme_m);
-	initialiser_pu(&coin_1, 1065, 1460);
-	initialiser_pu(&coin_2, 1696, 1400);
 	initialiser_platforme(&platforme, 1180, 1400);
-	initialiser_text(&instruction_1, "Press the arrow keys to move around", 488, 1360, 30);
-	initialiser_text(&instruction_2, "Press x to punch and c to kick", 1400, 1300, 30);
+
+	initialiser_instructions(instructions,4);
+	initialiser_coins(coins,2);
+	
 	initialiser_text(&game_over_txt, "GAME OVER", SCREEN_WIDTH / 2 - 250, SCREEN_HEIGHT / 2, 90);
+
 
 	p->music = Mix_LoadMUS("../sfx/alter-ego.mp3");
 	if (!p->mute)
@@ -43,11 +47,11 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 		Mix_PauseMusic();
 	if (p->fullscreen)
 		SDL_WM_ToggleFullScreen(ecran);
-	int passage_boucle=0;
+	int passage_boucle = 0;
+
 
 	while (Jcontinuer)
 	{
-
 		deplacer_hero(&safwen, &background, &Jcontinuer, c, platforme);
 		CollisionParfaite(&safwen, background, platforme);
 
@@ -58,37 +62,27 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 		else
 			deplacer_alea(&enemie);
 
-		if (coin_1.sprite.image != NULL && safwen.position.x >= coin_1.position.x && safwen.position.x <= coin_1.position.x + coin_1.sprite.frame.w && safwen.position.y >= coin_1.position.y && safwen.position.y <= coin_1.position.y + coin_1.sprite.frame.h)
-		{
-			safwen.score_hero.valeur_score += 20;
-			Mix_PlayChannel(-1, coin_1.click, 0);
-			coin_1.sprite.image = NULL;
-		}
+		coins_interaction(coins,2,&safwen);
 
-		if (coin_2.sprite.image != NULL && safwen.position.x >= coin_2.position.x && safwen.position.x <= coin_2.position.x + coin_2.sprite.frame.w && safwen.position.y >= coin_2.position.y && safwen.position.y <= coin_2.position.y + coin_2.sprite.frame.h)
-		{
-			safwen.score_hero.valeur_score += 20;
-			Mix_PlayChannel(-1, coin_1.click, 0);
-			coin_2.sprite.image = NULL;
-		}
+		playing_dialogue(&dialogue,safwen,ecran);
 
 		animer_entite(&enemie);
 		animer_hero(&safwen, safwen.state, c);
-		animer_pu(&coin_1, &coin_2);
-		animer_platforme(&platforme,0);
+		animer_coins(coins,2);
+		animer_platforme(&platforme, 0);
 
 		afficher_background(&background, ecran);
 		afficher_platforme(platforme, background, ecran);
-		afficher_pu(coin_1, ecran, background);
-		afficher_pu(coin_2, ecran, background);
+
+		afficher_coins(coins,2,background,ecran);
 		afficher_entite(&enemie, ecran, background);
-		afficher_text(instruction_1, background, ecran);
-		afficher_text(instruction_2, background, ecran);
+
+		afficher_instructions(instructions,4,background,ecran);
 
 		if (Jcontinuer == 0 && safwen.vie_hero.nb_vie != 0)
 			(*etat) = EXIT;
-		
-		if (safwen.vie_hero.nb_vie == 0 || abs(safwen.position.y + safwen.sprite.image->h - background.image->h-background.posCamera.h) < 170)
+
+		if (safwen.vie_hero.nb_vie == 0 || abs(safwen.position.y + safwen.sprite.image->h - background.image->h - background.posCamera.h) < 170)
 		{
 			animer_hero(&safwen, DIE, c);
 			passage_boucle++;
@@ -96,7 +90,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 			SDL_BlitSurface(black, NULL, ecran, &position_black);
 			SDL_BlitSurface(game_over_txt.text, NULL, ecran, &game_over_txt.position);
 
-			if (passage_boucle==15)
+			if (passage_boucle == 15)
 			{
 				safwen.sprite.image = NULL;
 				SDL_Delay(2000);
@@ -105,6 +99,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 			}
 		}
 		afficher_hero(safwen, ecran, background);
+		afficher_dialogue(dialogue,ecran);
 		SDL_Flip(ecran);
 
 		printf("%d\t%d\n", safwen.vie_hero.nb_vie, safwen.score_hero.valeur_score);
@@ -117,9 +112,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 	free_entite(&enemie);
 	freeenigme(&enigme_m);
 	free_hero(&safwen);
-	free_pu(&coin_1);
-	free_pu(&coin_2);
-	TTF_CloseFont(instruction_2.font);
-	SDL_FreeSurface(instruction_2.text);
+	free_pu(&coins[0]);
+	free_pu(&coins[1]);
 	SDL_FreeSurface(game_over_txt.text);
 }

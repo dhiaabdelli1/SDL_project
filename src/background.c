@@ -116,3 +116,42 @@ void afficher_text_2(text i, SDL_Surface *ecran, char message[20])
 	i.text = TTF_RenderText_Blended(i.font, message, i.color);
 	SDL_BlitSurface(i.text, NULL, ecran, &i.position);
 }
+
+void initialiser_instructions(text instructions[], int n)
+{
+
+	TTF_Init();
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		instructions[i].color.r = 255;
+		instructions[i].color.g = 255;
+		instructions[i].color.b = 255;
+		instructions[i].font = TTF_OpenFont("../fonts/chalk_2.ttf", 30);
+	}
+
+	instructions[0].text = TTF_RenderText_Blended(instructions[0].font, "Press the arrow keys to move around", instructions[0].color);
+	instructions[0].position.x = 488;
+	instructions[0].position.y = 1360;
+	instructions[1].text = TTF_RenderText_Blended(instructions[1].font, "Press x to punch and c to kick", instructions[1].color);
+	instructions[1].position.x = 1400;
+	instructions[1].position.y = 1300;
+	instructions[2].text = TTF_RenderText_Blended(instructions[2].font, "Jump to get more coins!", instructions[2].color);
+	instructions[2].position.x = 1800;
+	instructions[2].position.y = 1540;
+	instructions[3].text = TTF_RenderText_Blended(instructions[2].font, "Just kidding lol!", instructions[2].color);
+	instructions[3].position.x = 2050;
+	instructions[3].position.y = 2300;
+}
+void afficher_instructions(text instructions[], int n, background b, SDL_Surface *ecran)
+{
+	int i;
+	SDL_Rect pos;
+	for (i = 0; i < n; i++)
+	{
+		pos.x = instructions[i].position.x - b.posCamera.x;
+		pos.y = instructions[i].position.y - b.posCamera.y;
+		SDL_BlitSurface(instructions[i].text, NULL, ecran, &pos);
+	}
+}
+

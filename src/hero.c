@@ -253,12 +253,12 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 			}
 			if (b->posCamera.y < b->image->h - SCREEN_HEIGHT)
 			{
-				b->posCamera.y = (h->position.y + 3 * h->sprite.frame.h) - SCREEN_HEIGHT;
+				b->posCamera.y = (h->position.y + 4 * h->sprite.frame.h) - SCREEN_HEIGHT;
 			}
-			if (b->posCamera.x<0)
-				b->posCamera.x=1;
-			if (b->posCamera.y<0)
-				b->posCamera.y=1;
+			if (b->posCamera.x < 0)
+				b->posCamera.x = 1;
+			if (b->posCamera.y < 0)
+				b->posCamera.y = 1;
 
 			Uint8 *keystates = SDL_GetKeyState(NULL);
 			if (h->position.y > h->current_ground_position - JUMP_HEIGHT && tanguiza == 0 && !h->collision_UP)
@@ -395,4 +395,87 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 			timeAccumulatedMs -= timeStepMs;
 		}
 	}
+}
+void initialiser_dialogue(dialogue *d, SDL_Surface *ecran)
+{
+	int i=0;
+	FILE *f=NULL;
+	f = fopen("dialogue.txt", "r");
+	if (f == NULL)
+	{
+		fprintf(stderr, "Failed to open load file\n");
+		exit(EXIT_FAILURE);
+	}
+	while(!feof(f))
+	{
+		fgets(d->script[i],30,f);
+		i++;
+	}
+	fclose(f);
+
+	initialiser_text(&d->text, d->script[0], 100, 80, 15);
+
+	d->line = 0;
+	d->text.text = NULL;
+
+	d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+	d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, 220, 180, 32, 0, 0, 0, 0);
+	SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+	
+	d->pos_dialogue_box.x = 0;
+	d->pos_dialogue_box.y = SCREEN_HEIGHT - d->hero_dialogue->h;
+	d->pos_hero_dialogue.x = 100;
+	d->pos_hero_dialogue.y = SCREEN_HEIGHT - d->hero_dialogue->h;
+}
+
+void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
+{
+	static int tempsActuel = 0;
+	static int tempsPrecedent = 0;
+	d->text.position.x = 300;
+	d->text.position.y = 530;
+	if (h.position.x >= 600 && h.position.x < 2000 && d->line < 5)
+	{
+		tempsActuel = SDL_GetTicks();
+		if (tempsActuel - tempsPrecedent > 3000)
+		{
+			d->text.font = TTF_OpenFont("../fonts/chalk_2.ttf", 30);
+			d->text.text = TTF_RenderText_Blended(d->text.font, d->script[d->line], d->text.color);
+			d->line++;
+			tempsPrecedent = tempsActuel;
+		}
+		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
+		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+	}
+
+	else if (h.position.x >= 2100 && h.position.x < 2600 && d->line < 8)
+	{
+		tempsActuel = SDL_GetTicks();
+		if (tempsActuel - tempsPrecedent > 3000)
+		{
+			d->text.font = TTF_OpenFont("../fonts/chalk_2.ttf", 30);
+			d->text.text = TTF_RenderText_Blended(d->text.font, d->script[d->line], d->text.color);
+			d->line++;
+			tempsPrecedent = tempsActuel;
+		}
+		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
+		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+	}
+	else
+	{
+		d->text.text = NULL;
+		tempsActuel = 0;
+		tempsPrecedent = 0;
+		d->dialogue_box = NULL;
+		d->hero_dialogue = NULL;
+	}
+}
+
+void afficher_dialogue(dialogue d, SDL_Surface *ecran)
+{
+	SDL_BlitSurface(d.dialogue_box, NULL, ecran, &d.pos_dialogue_box);
+	SDL_BlitSurface(d.hero_dialogue, NULL, ecran, &d.pos_hero_dialogue);
+	SDL_BlitSurface(d.text.text, NULL, ecran, &d.text.position);
 }

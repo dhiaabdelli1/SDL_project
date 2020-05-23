@@ -20,7 +20,6 @@ void initialiser_entite(entite *E)
 	srand(time(NULL));
 	E->posMin.x = rand() % 200 + 100 + E->position.x; //+ position Hero
 	E->posMax.x = rand() % 100 + E->posMin.x;
-
 }
 void animer_entite(entite *E)
 {
@@ -50,8 +49,8 @@ void animer_entite(entite *E)
 			break;
 		}
 
-		//opt
-		//E->sprite_entite.image = SDL_DisplayFormat(E->sprite_entite.image);
+			//opt
+			//E->sprite_entite.image = SDL_DisplayFormat(E->sprite_entite.image);
 			/*case (ATTACK_entite):
 	{
 		E->sprite_entite.image = IMG_Load("img/es/attack.png");
@@ -137,49 +136,7 @@ void attack_entite(entite *E, hero *h)
 		}
 	}
 }
-void input_ennemi(entite *E, hero *h)
-{
-	switch (E->state_entite)
-	{
-	case WALK_entite:
-		deplacer_alea(E);
-		if (E->posMin.x <= h->position.x)
-			E->state_entite = FOLLOW_entite;
-		break;
-	case FOLLOW_entite:
-		attack_entite(E, h);
-		break;
-	/*case ATTACK_entite:
-		attack_entite(E, h);
-		if (E->position.x - h->position.x != 0)
-			E->state_entite = FOLLOW_entite;
-		break;*/
-	case DIE_entite:
-		E->state_entite = DIE_entite;
-		break;
-	}
-}
-void update_entite(entite *E, hero *h)
-{
-	switch (E->state_entite)
-	{
-	case WALK_entite:
-		deplacer_alea(E);
-		animer_entite(E);
-		break;
-	case FOLLOW_entite:
-		attack_entite(E, h);
-		animer_entite(E);
-		break;
-	case ATTACK_entite:
-		attack_entite(E, h);
-		animer_entite(E);
-		break;
-	case DIE_entite:
-		animer_entite(E);
-		break;
-	}
-}
+
 void afficher_entite(entite *E, SDL_Surface *screen, background b)
 {
 	SDL_Rect pos;
@@ -192,62 +149,83 @@ void free_entite(entite *E)
 	SDL_FreeSurface(E->sprite_entite.image);
 }
 
-void initialiser_pu(power_up *p, int x, int y)
+void free_pu(power_up *p)
 {
+	SDL_FreeSurface(p->sprite.image);
+}
+
+void initialiser_coins(power_up coins[], int n)
+{
+	int i;
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
 	{
 		printf("%s", Mix_GetError());
 	}
-	p->click = Mix_LoadWAV("../sfx/coin_pick.wav");
+	for (i = 0; i < n; i++)
+	{
+		coins[i].click = Mix_LoadWAV("../sfx/coin_pick.wav");
+		coins[i].sprite.image = IMG_Load("../img/es/coin_small.png");
+		coins[i].sprite.curframe = 0;
+		coins[i].sprite.maxframe = 5;
+		coins[i].sprite.frame.x = 0;
+		coins[i].sprite.frame.y = 0;
+		coins[i].sprite.frame.w = coins[i].sprite.image->w / 6;
+		coins[i].sprite.frame.h = coins[i].sprite.image->h / 3;
+	}
 
-	p->sprite.image = IMG_Load("../img/es/coin_small.png");
-	p->sprite.curframe = 0;
-	p->sprite.maxframe = 5;
-
-	p->sprite.frame.x = 0;
-	p->sprite.frame.y = 0;
-	p->sprite.frame.w = p->sprite.image->w / 6;
-	p->sprite.frame.h = p->sprite.image->h / 3;
-
-	p->position.x = x;
-	p->position.y = y;
-
-
+	coins[0].position.x = 1065;
+	coins[0].position.y = 1460;
+	coins[1].position.x = 1696;
+	coins[1].position.y = 1400;
 }
 
-void animer_pu(power_up *p_1, power_up *p_2)
+void coins_interaction(power_up coins[], int n, hero *h)
+{
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		if (coins[i].sprite.image != NULL && h->position.x >= coins[i].position.x && h->position.x <= coins[i].position.x + coins[i].sprite.frame.w && h->position.y >= coins[i].position.y && h->position.y <= coins[i].position.y + coins[i].sprite.frame.h)
+		{
+			h->score_hero.valeur_score += 20;
+			Mix_PlayChannel(-1, coins[i].click, 0);
+			coins[i].sprite.image = NULL;
+		}
+	}
+}
+void animer_coins(power_up coins[], int n)
 {
 	static int tempsActuel = 0;
 	static int tempsPrecedent = 0;
+	int i;
 
 	tempsActuel = SDL_GetTicks();
 	if (tempsActuel - tempsPrecedent > 100)
 	{
-		if (p_1->sprite.curframe >= p_1->sprite.maxframe)
+		for (i = 0; i < n; i++)
 		{
-			p_1->sprite.curframe = 0;
-			p_2->sprite.curframe = 0;
-		}
+			if (coins[i].sprite.curframe >= coins[i].sprite.maxframe)
+			{
+				coins[i].sprite.curframe = 0;
+				coins[i].sprite.curframe = 0;
+			}
 
-		p_1->sprite.frame.x = p_1->sprite.curframe * p_1->sprite.frame.w;
-		p_1->sprite.curframe += 1;
-		p_2->sprite.frame.x = p_2->sprite.curframe * p_2->sprite.frame.w;
-		p_2->sprite.curframe += 1;
+			coins[i].sprite.frame.x = coins[i].sprite.curframe * coins[i].sprite.frame.w;
+			coins[i].sprite.curframe += 1;
+		}
 
 		tempsPrecedent = tempsActuel;
 	}
 }
 
-void afficher_pu(power_up p, SDL_Surface *screen, background b)
+void afficher_coins(power_up coins[], int n, background b, SDL_Surface *ecran)
 {
 	SDL_Rect pos;
-	pos.x = p.position.x - b.posCamera.x;
-	pos.y = p.position.y - b.posCamera.y;
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		pos.x = coins[i].position.x - b.posCamera.x;
+		pos.y = coins[i].position.y - b.posCamera.y;
 
-	SDL_BlitSurface(p.sprite.image, &p.sprite.frame, screen, &pos);
-}
-
-void free_pu(power_up *p)
-{
-	SDL_FreeSurface(p->sprite.image);
+		SDL_BlitSurface(coins[i].sprite.image, &coins[i].sprite.frame, ecran, &pos);
+	}
 }

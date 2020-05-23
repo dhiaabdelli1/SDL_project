@@ -108,7 +108,7 @@ void CollisionParfaite(hero *h, background b, platforme p)
 		h->collision_UP = 1;
 	if (abs(h->position.y - b.posCamera.y) < 7)
 		h->collision_UP = 1;
-	if (abs(h->position.y + h->sprite.image->h - b.image->h-b.posCamera.h) < 170)
+	if (abs(h->position.y + h->sprite.image->h - b.image->h - b.posCamera.h) < 170)
 		h->collision_DOWN = 1;
 }
 

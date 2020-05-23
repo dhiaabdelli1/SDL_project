@@ -61,8 +61,11 @@ void animer_entite(entite *E);
 void afficher_entite(entite *E, SDL_Surface *screen,background b);
 void free_entite(entite *E);
 
-void initialiser_pu(power_up *p,int x,int y);
-void animer_pu(power_up *p1,power_up *p2);
-void afficher_pu(power_up p,SDL_Surface *screen,background b);
+
 void free_pu(power_up *p);
+
+void initialiser_coins(power_up coins[], int n);
+void coins_interaction(power_up coins[], int n, hero *h);
+void animer_coins(power_up coins[], int n);
+void afficher_coins(power_up coins[], int n, background b, SDL_Surface *ecran);
 #endif

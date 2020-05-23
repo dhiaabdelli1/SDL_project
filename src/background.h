@@ -48,4 +48,7 @@ void afficher_text(text i, background b, SDL_Surface *ecran);
 
 void initialiser_text_2(text *i, int x, int y, int size);
 void afficher_text_2(text i, SDL_Surface *ecran, char message[20]);
+
+void initialiser_instructions(text instructions[], int n);
+void afficher_instructions(text instructions[], int n,background b,SDL_Surface *ecran);
 #endif
