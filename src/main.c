@@ -9,12 +9,17 @@
 
 void main(int argc, char *argv[])
 {
-    etat etat = MENU;
-    if (argc==2)
-        etat=INTRO;
-    int continuer = 1;
     SDL_Surface *tab[190];
-    load_transition(tab);
+    etat etat = MENU;
+    if (argc == 2)
+    {
+        etat = INTRO;
+        load_transition(tab);
+    }
+
+    int continuer = 1;
+
+    
 
     SDL_Surface *screen;
 

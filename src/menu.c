@@ -13,20 +13,20 @@ void load_transition(SDL_Surface *tab[])
 void animer_animer(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat)
 {
 	static int i = 0;
-	static int tempsActuel=0;
-	static int tempsPrecedent=0;
+	static int tempsActuel = 0;
+	static int tempsPrecedent = 0;
 	SDL_Rect pos;
 	pos.x = 0;
 	pos.y = 0;
 	SDL_BlitSurface(tab[i], NULL, ecran, &pos);
 	SDL_Flip(ecran);
-	tempsActuel=SDL_GetTicks();
-	if (tempsActuel-tempsPrecedent>20)
+	tempsActuel = SDL_GetTicks();
+	if (tempsActuel - tempsPrecedent > 20)
 	{
 		i++;
-		tempsPrecedent=tempsActuel;
+		tempsPrecedent = tempsActuel;
 	}
-	
+
 	if (i == 189)
 		*etat = MENU;
 	else
@@ -1017,6 +1017,14 @@ void initialiser_parameters(parameter *p)
 
 void menu(SDL_Surface *screen, etat *etat, parameter *p)
 {
+	static int i = 200;
+	static int once=0;
+	once++;
+	SDL_Surface *black = IMG_Load("../img/black.jpg");
+
+	SDL_Rect position_black;
+	position_black.x = 0;
+	position_black.y = 0;
 	SDL_Event event;
 
 	SDL_Surface *backgroundP = NULL;
@@ -1380,7 +1388,20 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 		SDL_BlitSurface(text.text, NULL, screen, &text.position);
 		SDL_BlitSurface(note, NULL, screen, &positionNote);
 		SDL_BlitSurface(loop, NULL, screen, &positionLoop);
+		if (i != 0 && once<=1) 
+		{
+			SDL_SetAlpha(black, SDL_SRCALPHA, i);
+			i -= 2;
+		}
+		else
+		{
+			SDL_SetAlpha(black, SDL_SRCALPHA, 0);
+		}
+		
+
+		SDL_BlitSurface(black, NULL, screen, &position_black);
 		SDL_Flip(screen);
+
 	}
 	SDL_FreeSurface(backgroundP);
 	for (choice = 0; choice < 5; choice++)
