@@ -23,6 +23,7 @@ void initialiser_entite(entite *E)
 }
 void animer_entite(entite *E)
 {
+	static int dead = 0, walking = 0, following = 0;
 	if (E->sprite_entite.image != NULL)
 	{
 		static int tempsActuel = 0;
@@ -32,20 +33,41 @@ void animer_entite(entite *E)
 		{
 		case (DIE_entite):
 		{
-			E->sprite_entite.image = IMG_Load("../img/es/Die.png");
-			E->sprite_entite.maxframe = 4;
+			if (!dead)
+			{
+				E->sprite_entite.image = IMG_Load("../img/es/Die.png");
+				E->sprite_entite.maxframe = 4;
+				dead = 1;
+				walking=0;
+				following=0;
+			}
+
 			break;
 		}
 		case (WALK_entite):
 		{
-			E->sprite_entite.image = IMG_Load("../img/es/walk.png");
-			E->sprite_entite.maxframe = 5;
+			if (!walking)
+			{
+				E->sprite_entite.image = IMG_Load("../img/es/walk.png");
+				E->sprite_entite.maxframe = 5;
+				walking = 1;
+				dead=0;
+				following=0;
+			}
+
 			break;
 		}
 		case (FOLLOW_entite):
 		{
-			E->sprite_entite.image = IMG_Load("../img/es/attack.png");
-			E->sprite_entite.maxframe = 3;
+			if (!following)
+			{
+				E->sprite_entite.image = IMG_Load("../img/es/attack.png");
+				E->sprite_entite.maxframe = 3;
+				following=1;
+				dead=0;
+				walking=0;
+			}
+
 			break;
 		}
 
@@ -244,7 +266,6 @@ void initialiser_hearts(heart hearts[], int n)
 	}
 	hearts[0].position.x = 1396;
 	hearts[0].position.y = 1330;
-
 }
 
 void animer_hearts(heart hearts[], int n)
@@ -268,7 +289,6 @@ void animer_hearts(heart hearts[], int n)
 		sens = -1;
 	if (hearts[0].position.y <= 1310)
 		sens = 1;
-
 }
 void hearts_interaction(heart hearts[], int n, hero *h)
 {

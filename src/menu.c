@@ -1,6 +1,6 @@
 #include "menu.h"
 
-void load_transition(SDL_Surface *tab[])
+void load_intro(SDL_Surface *tab[])
 {
 	int i;
 	char image[50];
@@ -10,7 +10,7 @@ void load_transition(SDL_Surface *tab[])
 		tab[i] = IMG_Load(image);
 	}
 }
-void animer_animer(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat)
+void play_intro(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat)
 {
 	static int i = 0;
 	static int tempsActuel = 0;
@@ -1017,7 +1017,7 @@ void initialiser_parameters(parameter *p)
 
 void menu(SDL_Surface *screen, etat *etat, parameter *p)
 {
-	static int i = 200;
+	static int i = 250;
 	static int once=0;
 	once++;
 	SDL_Surface *black = IMG_Load("../img/black.jpg");
@@ -1391,7 +1391,7 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 		if (i != 0 && once<=1) 
 		{
 			SDL_SetAlpha(black, SDL_SRCALPHA, i);
-			i -= 2;
+			i --;
 		}
 		else
 		{

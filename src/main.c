@@ -14,18 +14,18 @@ void main(int argc, char *argv[])
     if (argc == 2)
     {
         etat = INTRO;
-        load_transition(tab);
+        load_intro(tab);
     }
 
     int continuer = 1;
-
-    
 
     SDL_Surface *screen;
 
     hero safwen;
     background background;
     parameter parameter;
+
+    initialiser_parameters(&parameter);
 
     character c;
 
@@ -40,10 +40,9 @@ void main(int argc, char *argv[])
         switch (etat)
         {
         case INTRO:
-            animer_animer(tab, screen, &etat);
+            play_intro(tab, screen, &etat);
             break;
         case MENU:
-            initialiser_parameters(&parameter);
             menu(screen, &etat, &parameter);
             break;
         case GAME:

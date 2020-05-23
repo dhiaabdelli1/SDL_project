@@ -434,10 +434,14 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
 {
 	static int tempsActuel = 0;
 	static int tempsPrecedent = 0;
+	static int once = 0;
+	static int once_2 = 0;
+
 	d->text.position.x = 300;
 	d->text.position.y = 530;
 	if (h.position.x >= 600 && h.position.x < 1900 && d->line < 5)
 	{
+		once++;
 		tempsActuel = SDL_GetTicks();
 		if (tempsActuel - tempsPrecedent > 3000)
 		{
@@ -446,13 +450,18 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
 			d->line++;
 			tempsPrecedent = tempsActuel;
 		}
-		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
-		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
-		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+		if (once == 1)
+		{
+
+			d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+			d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
+			SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+		}
 	}
 
 	else if (h.position.x >= 2000 && h.position.x < 2600 && d->line < 8)
 	{
+		once_2++;
 		tempsActuel = SDL_GetTicks();
 		if (tempsActuel - tempsPrecedent > 3000)
 		{
@@ -461,9 +470,12 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
 			d->line++;
 			tempsPrecedent = tempsActuel;
 		}
-		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
-		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
-		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+		if (once_2 ==1)
+		{
+			d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+			d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
+			SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+		}
 	}
 	else
 	{
