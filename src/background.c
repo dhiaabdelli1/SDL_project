@@ -122,7 +122,7 @@ void initialiser_instructions(text instructions[], int n)
 	TTF_Init();
 	char script[4][40];
 	FILE *f = NULL;
-	f = fopen("instructions.txt", "r");
+	f = fopen("../txt_files/instructions.txt", "r");
 	if (f == NULL)
 	{
 		fprintf(stderr, "Failed to open load file\n");

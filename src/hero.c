@@ -400,7 +400,7 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 {
 	int i = 0;
 	FILE *f = NULL;
-	f = fopen("dialogue.txt", "r");
+	f = fopen("../txt_files/dialogue.txt", "r");
 	if (f == NULL)
 	{
 		fprintf(stderr, "Failed to open load file\n");

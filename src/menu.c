@@ -272,7 +272,7 @@ void game_load(hero *h, background *b, etat *etat, SDL_Surface *screen, paramete
 void save_game(hero h, background b, character c)
 {
 	FILE *f = NULL;
-	f = fopen("niveau.txt", "w");
+	f = fopen("../txt_files/niveau.txt", "w");
 	if (f == NULL)
 	{
 		fprintf(stderr, "Failed to open save file\n");
@@ -293,7 +293,7 @@ void load_game(hero *h, background *b, character *c)
 {
 	int i;
 	FILE *f = NULL;
-	f = fopen("niveau.txt", "r");
+	f = fopen("../txt_files/niveau.txt", "r");
 	if (f == NULL)
 	{
 		fprintf(stderr, "Failed to open load file\n");
