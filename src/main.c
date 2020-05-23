@@ -7,11 +7,14 @@
 #include "structs.h"
 #include "defs.h"
 
-void main()
+void main(int argc, char *argv[])
 {
     etat etat = MENU;
-
+    if (argc==2)
+        etat=INTRO;
     int continuer = 1;
+    SDL_Surface *tab[190];
+    load_transition(tab);
 
     SDL_Surface *screen;
 
@@ -23,8 +26,6 @@ void main()
 
     SDL_Event event;
 
-    initialiser_parameters(&parameter);
-
     SDL_Init(SDL_INIT_EVERYTHING);
 
     screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
@@ -33,7 +34,11 @@ void main()
     {
         switch (etat)
         {
+        case INTRO:
+            animer_animer(tab, screen, &etat);
+            break;
         case MENU:
+            initialiser_parameters(&parameter);
             menu(screen, &etat, &parameter);
             break;
         case GAME:

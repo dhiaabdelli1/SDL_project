@@ -1,5 +1,37 @@
 #include "menu.h"
 
+void load_transition(SDL_Surface *tab[])
+{
+	int i;
+	char image[50];
+	for (i = 0; i < 189; i++)
+	{
+		sprintf(image, "../img/intro/%d.png", i + 1);
+		tab[i] = IMG_Load(image);
+	}
+}
+void animer_animer(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat)
+{
+	static int i = 0;
+	static int tempsActuel=0;
+	static int tempsPrecedent=0;
+	SDL_Rect pos;
+	pos.x = 0;
+	pos.y = 0;
+	SDL_BlitSurface(tab[i], NULL, ecran, &pos);
+	SDL_Flip(ecran);
+	tempsActuel=SDL_GetTicks();
+	if (tempsActuel-tempsPrecedent>20)
+	{
+		i++;
+		tempsPrecedent=tempsActuel;
+	}
+	
+	if (i == 189)
+		*etat = MENU;
+	else
+		*etat = INTRO;
+}
 void game_over(SDL_Surface *screen, etat *etat, parameter *p)
 {
 	SDL_Event event;
@@ -14,8 +46,8 @@ void game_over(SDL_Surface *screen, etat *etat, parameter *p)
 
 	initialiser_text_2(&main_menu, 430, 300, 50);
 	initialiser_text_2(&restart, 80, 300, 50);
-	main_menu.text=TTF_RenderText_Blended(main_menu.font, "Main Menu", main_menu.color);
-	restart.text=TTF_RenderText_Blended(restart.font, "Restart", restart.color);
+	main_menu.text = TTF_RenderText_Blended(main_menu.font, "Main Menu", main_menu.color);
+	restart.text = TTF_RenderText_Blended(restart.font, "Restart", restart.color);
 
 	int continuer = 1;
 	int rang = 0;
@@ -43,12 +75,12 @@ void game_over(SDL_Surface *screen, etat *etat, parameter *p)
 					main_menu.color.r = 255;
 					main_menu.color.g = 0;
 					main_menu.color.b = 0;
-					main_menu.size=65;
+					main_menu.size = 65;
 
 					restart.color.r = 255;
 					restart.color.g = 255;
 					restart.color.b = 255;
-					restart.size=50;
+					restart.size = 50;
 					rang = 1;
 					break;
 				case SDLK_LEFT:
@@ -56,12 +88,12 @@ void game_over(SDL_Surface *screen, etat *etat, parameter *p)
 					main_menu.color.r = 255;
 					main_menu.color.g = 255;
 					main_menu.color.b = 255;
-					main_menu.size=50;
+					main_menu.size = 50;
 
 					restart.color.r = 255;
 					restart.color.g = 0;
 					restart.color.b = 0;
-					restart.size=65;
+					restart.size = 65;
 					rang = 0;
 					break;
 				case SDLK_RETURN:
@@ -82,8 +114,8 @@ void game_over(SDL_Surface *screen, etat *etat, parameter *p)
 			}
 		}
 		SDL_BlitSurface(game_over_bg, NULL, screen, &position_game_over);
-		afficher_text_2(restart,screen,"Restart");
-		afficher_text_2(main_menu,screen,"Main Menu");
+		afficher_text_2(restart, screen, "Restart");
+		afficher_text_2(main_menu, screen, "Main Menu");
 		SDL_Flip(screen);
 	}
 	SDL_FreeSurface(game_over_bg);
@@ -1351,7 +1383,7 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 		SDL_Flip(screen);
 	}
 	SDL_FreeSurface(backgroundP);
-	for (choice=0;choice<5;choice++)
+	for (choice = 0; choice < 5; choice++)
 	{
 		SDL_FreeSurface(buttons[choice].image);
 	}

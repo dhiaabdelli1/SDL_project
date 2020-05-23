@@ -17,6 +17,7 @@ typedef enum etat
     EXIT,
     CHARACTER,
     GAME_LOAD,
+    INTRO,
 } etat;
 
 typedef enum Character

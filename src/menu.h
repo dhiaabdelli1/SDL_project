@@ -39,3 +39,5 @@ void character_choice(hero *h, etat *etat, SDL_Surface *screen, parameter *p, ch
 void save_game(hero h, background b, character c);
 void load_game(hero *h, background *b, character *c);
 void game_over(SDL_Surface *screen, etat *etat, parameter *p);
+void load_transition(SDL_Surface *tab[]);
+void animer_animer(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat);
