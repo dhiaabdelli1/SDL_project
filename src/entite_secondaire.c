@@ -229,3 +229,70 @@ void afficher_coins(power_up coins[], int n, background b, SDL_Surface *ecran)
 		SDL_BlitSurface(coins[i].sprite.image, &coins[i].sprite.frame, ecran, &pos);
 	}
 }
+
+void initialiser_hearts(heart hearts[], int n)
+{
+	int i;
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
+	{
+		printf("%s", Mix_GetError());
+	}
+	for (i = 0; i < n; i++)
+	{
+		hearts[i].click = Mix_LoadWAV("../sfx/coin_pick.wav");
+		hearts[i].image = IMG_Load("../img/hero/heart1.png");
+	}
+	hearts[0].position.x = 1396;
+	hearts[0].position.y = 1330;
+
+}
+
+void animer_hearts(heart hearts[], int n)
+{
+	static int tempsActuel = 0;
+	static int tempsPrecedent = 0;
+	static int sens = 1;
+	int i;
+
+	tempsActuel = SDL_GetTicks();
+	if (tempsActuel - tempsPrecedent > 30)
+	{
+		for (i = 0; i < n; i++)
+		{
+			hearts[i].position.y += 1 * sens;
+			tempsPrecedent = tempsActuel;
+		}
+	}
+
+	if (hearts[0].position.y >= 1330)
+		sens = -1;
+	if (hearts[0].position.y <= 1310)
+		sens = 1;
+
+}
+void hearts_interaction(heart hearts[], int n, hero *h)
+{
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		if (hearts[i].image != NULL && h->position.x >= hearts[i].position.x && h->position.x <= hearts[i].position.x + hearts[i].image->w && h->position.y >= hearts[i].position.y && h->position.y <= hearts[i].position.y + hearts[i].image->h)
+		{
+			h->vie_hero.nb_vie++;
+			Mix_PlayChannel(-1, hearts[i].click, 0);
+			hearts[i].image = NULL;
+		}
+	}
+}
+void afficher_hearts(heart hearts[], int n, background b, SDL_Surface *ecran)
+{
+
+	SDL_Rect pos;
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		pos.x = hearts[i].position.x - b.posCamera.x;
+		pos.y = hearts[i].position.y - b.posCamera.y;
+
+		SDL_BlitSurface(hearts[i].image, NULL, ecran, &pos);
+	}
+}

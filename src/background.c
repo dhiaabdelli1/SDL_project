@@ -112,36 +112,33 @@ void initialiser_text_2(text *i, int x, int y, int size)
 }
 void afficher_text_2(text i, SDL_Surface *ecran, char message[20])
 {
-
 	i.text = TTF_RenderText_Blended(i.font, message, i.color);
 	SDL_BlitSurface(i.text, NULL, ecran, &i.position);
 }
 
 void initialiser_instructions(text instructions[], int n)
 {
-
-	TTF_Init();
 	int i;
-	for (i = 0; i < n; i++)
+	TTF_Init();
+	char script[4][40];
+	FILE *f = NULL;
+	f = fopen("instructions.txt", "r");
+	if (f == NULL)
 	{
-		instructions[i].color.r = 255;
-		instructions[i].color.g = 255;
-		instructions[i].color.b = 255;
-		instructions[i].font = TTF_OpenFont("../fonts/chalk_2.ttf", 30);
+		fprintf(stderr, "Failed to open load file\n");
+		exit(EXIT_FAILURE);
 	}
+	while (!feof(f))
+	{
+		fgets(script[i], 40, f);
+		i++;
+	}
+	fclose(f);
 
-	instructions[0].text = TTF_RenderText_Blended(instructions[0].font, "Press the arrow keys to move around", instructions[0].color);
-	instructions[0].position.x = 488;
-	instructions[0].position.y = 1360;
-	instructions[1].text = TTF_RenderText_Blended(instructions[1].font, "Press x to punch and c to kick", instructions[1].color);
-	instructions[1].position.x = 1400;
-	instructions[1].position.y = 1300;
-	instructions[2].text = TTF_RenderText_Blended(instructions[2].font, "Jump to get more coins!", instructions[2].color);
-	instructions[2].position.x = 1800;
-	instructions[2].position.y = 1540;
-	instructions[3].text = TTF_RenderText_Blended(instructions[2].font, "Just kidding lol!", instructions[2].color);
-	instructions[3].position.x = 2050;
-	instructions[3].position.y = 2300;
+	initialiser_text(&instructions[0],script[0],488,1360,30);
+	initialiser_text(&instructions[1],script[1],1400,1300,30);
+	initialiser_text(&instructions[2],script[2],1800,1540,30);
+	initialiser_text(&instructions[3],script[3],2050,2300,30);
 }
 void afficher_instructions(text instructions[], int n, background b, SDL_Surface *ecran)
 {

@@ -83,7 +83,7 @@ void animer_hero(hero *h, state movement,character c);
 void afficher_hero(hero h, SDL_Surface *screen,background b);
 void free_hero(hero *h);
 
-void initialiser_dialogue(dialogue *d, SDL_Surface *ecran);
+void initialiser_dialogue(dialogue *d, SDL_Surface *ecran,character c);
 void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran);
 void afficher_dialogue(dialogue d, SDL_Surface *ecran);
 #endif

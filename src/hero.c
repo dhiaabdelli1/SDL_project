@@ -396,19 +396,19 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 		}
 	}
 }
-void initialiser_dialogue(dialogue *d, SDL_Surface *ecran)
+void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 {
-	int i=0;
-	FILE *f=NULL;
+	int i = 0;
+	FILE *f = NULL;
 	f = fopen("dialogue.txt", "r");
 	if (f == NULL)
 	{
 		fprintf(stderr, "Failed to open load file\n");
 		exit(EXIT_FAILURE);
 	}
-	while(!feof(f))
+	while (!feof(f))
 	{
-		fgets(d->script[i],30,f);
+		fgets(d->script[i], 30, f);
 		i++;
 	}
 	fclose(f);
@@ -417,11 +417,13 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran)
 
 	d->line = 0;
 	d->text.text = NULL;
-
-	d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+	if (c == SAFWEN)
+		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+	else if (c == OMAR)
+		d->hero_dialogue = IMG_Load("../img/hero/omar_choice_active.png");
 	d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, 220, 180, 32, 0, 0, 0, 0);
 	SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
-	
+
 	d->pos_dialogue_box.x = 0;
 	d->pos_dialogue_box.y = SCREEN_HEIGHT - d->hero_dialogue->h;
 	d->pos_hero_dialogue.x = 100;
@@ -434,7 +436,7 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
 	static int tempsPrecedent = 0;
 	d->text.position.x = 300;
 	d->text.position.y = 530;
-	if (h.position.x >= 600 && h.position.x < 2000 && d->line < 5)
+	if (h.position.x >= 600 && h.position.x < 1900 && d->line < 5)
 	{
 		tempsActuel = SDL_GetTicks();
 		if (tempsActuel - tempsPrecedent > 3000)
@@ -449,7 +451,7 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
 		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
 	}
 
-	else if (h.position.x >= 2100 && h.position.x < 2600 && d->line < 8)
+	else if (h.position.x >= 2000 && h.position.x < 2600 && d->line < 8)
 	{
 		tempsActuel = SDL_GetTicks();
 		if (tempsActuel - tempsPrecedent > 3000)

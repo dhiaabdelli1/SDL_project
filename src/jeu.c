@@ -21,6 +21,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 	dialogue dialogue;
 	text instructions[4];
 	power_up coins[2];
+	heart hearts[2];
 
 	SDL_Surface *black = IMG_Load("../img/black.jpg");
 
@@ -28,7 +29,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 	position_black.x = 0;
 	position_black.y = 0;
 
-	initialiser_dialogue(&dialogue,ecran);
+	initialiser_dialogue(&dialogue,ecran,c);
 	initialiser_background(&background);
 	initialiser_entite(&enemie);
 	initenigme(&enigme_m);
@@ -36,6 +37,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 
 	initialiser_instructions(instructions,4);
 	initialiser_coins(coins,2);
+	initialiser_hearts(hearts,1);
 	
 	initialiser_text(&game_over_txt, "GAME OVER", SCREEN_WIDTH / 2 - 250, SCREEN_HEIGHT / 2, 90);
 
@@ -63,18 +65,21 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 			deplacer_alea(&enemie);
 
 		coins_interaction(coins,2,&safwen);
+		hearts_interaction(hearts,1,&safwen);
 
 		playing_dialogue(&dialogue,safwen,ecran);
 
 		animer_entite(&enemie);
 		animer_hero(&safwen, safwen.state, c);
 		animer_coins(coins,2);
+		animer_hearts(hearts,1);
 		animer_platforme(&platforme, 0);
 
 		afficher_background(&background, ecran);
 		afficher_platforme(platforme, background, ecran);
 
 		afficher_coins(coins,2,background,ecran);
+		afficher_hearts(hearts,1,background,ecran);
 		afficher_entite(&enemie, ecran, background);
 
 		afficher_instructions(instructions,4,background,ecran);
