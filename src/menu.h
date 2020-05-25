@@ -41,3 +41,4 @@ void load_game(hero *h, background *b, character *c);
 void game_over(SDL_Surface *screen, etat *etat, parameter *p);
 void load_intro(SDL_Surface *tab[]);
 void play_intro(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat);
+void cheat(SDL_Surface *ecran, etat *etat);

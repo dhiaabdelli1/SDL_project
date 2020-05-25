@@ -1,4 +1,198 @@
 #include "menu.h"
+#include "background.h"
+
+#define SIZE 10
+
+unsigned long
+hash(const char *str)
+{
+	unsigned long hash = 5381;
+	int c;
+
+	while (c = *str++)
+		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+	return hash % SIZE;
+}
+
+void cheat(SDL_Surface *ecran, etat *etat)
+{
+
+	char pass[11][20];
+	int i = 0;
+
+	SDL_Surface *background = SDL_LoadBMP("../img/menu/background/ZEUUN.bmp");
+	SDL_Rect pos_background;
+	pos_background.x = 0;
+	pos_background.y = 0;
+
+	FILE *f;
+	f = fopen("../txt_files/passwords.txt", "r");
+	while (!feof(f))
+	{
+		fscanf(f, "%s", pass[i]);
+		i++;
+	}
+	fclose(f);
+
+	char entry_char[10];
+	entry_char[0] = '\0';
+
+	//strcat(image_load, "_left");
+
+	int continuer = 1;
+
+	SDL_Event event;
+	text entry,message;
+
+	initialiser_text(&entry, entry_char, 250, 200, 15);
+	initialiser_text(&message, "", 250, 250, 15);
+
+	SDL_Rect position;
+
+	SDL_Init(SDL_INIT_VIDEO);
+
+
+	position.x = 0;
+	position.y = 0;
+
+	while (continuer)
+	{
+		while (SDL_PollEvent(&event))
+		{
+			switch (event.type)
+			{
+			case SDL_QUIT:
+				continuer = 0;
+				*etat = MENU;
+				break;
+			case SDL_KEYDOWN:
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_RETURN:
+					if (!strcmp(pass[hash(entry_char)], pass[hash("zmonka")]))
+						message.text = TTF_RenderText_Blended(entry.font, "ACCESS GRANTED", entry.color);
+					else
+					{
+						message.text = TTF_RenderText_Blended(entry.font, "ACCESS DENIED", entry.color);
+					}
+					break;
+				case SDLK_a:
+					strcat(entry_char, "a");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_b:
+					strcat(entry_char, "b");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_c:
+					strcat(entry_char, "c");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_d:
+					strcat(entry_char, "d");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_e:
+					strcat(entry_char, "f");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_f:
+					strcat(entry_char, "f");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_g:
+					strcat(entry_char, "g");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_h:
+					strcat(entry_char, "h");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_i:
+					strcat(entry_char, "i");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_j:
+					strcat(entry_char, "j");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_k:
+					strcat(entry_char, "k");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_l:
+					strcat(entry_char, "l");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_m:
+					strcat(entry_char, "m");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_n:
+					strcat(entry_char, "n");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_o:
+					strcat(entry_char, "o");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_p:
+					strcat(entry_char, "p");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_q:
+					strcat(entry_char, "q");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_r:
+					strcat(entry_char, "r");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_s:
+					strcat(entry_char, "s");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_t:
+					strcat(entry_char, "t");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_u:
+					strcat(entry_char, "u");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_v:
+					strcat(entry_char, "v");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_w:
+					strcat(entry_char, "w");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_x:
+					strcat(entry_char, "x");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_y:
+					strcat(entry_char, "y");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				case SDLK_z:
+					strcat(entry_char, "z");
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
+					break;
+				}
+				break;
+			}
+		}
+		SDL_BlitSurface(background, NULL, ecran, &pos_background);
+		SDL_BlitSurface(entry.text, NULL, ecran, &entry.position);
+		SDL_BlitSurface(message.text, NULL, ecran, &message.position);
+		SDL_Flip(ecran);
+	}
+
+	SDL_Quit();
+}
 
 void load_intro(SDL_Surface *tab[])
 {
@@ -1018,7 +1212,7 @@ void initialiser_parameters(parameter *p)
 void menu(SDL_Surface *screen, etat *etat, parameter *p)
 {
 	static int i = 250;
-	static int once=0;
+	static int once = 0;
 	once++;
 	SDL_Surface *black = IMG_Load("../img/black.jpg");
 
@@ -1130,6 +1324,12 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 						*etat = SETTING;
 						continuer = 0;
 						//settings(screen, p);
+					}
+					if (rang==4)
+					{
+						Mix_PlayChannel(-1, p->click, 0);
+						*etat = CHEAT;
+						continuer = 0;
 					}
 					if (rang == 5)
 					{
@@ -1388,20 +1588,18 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 		SDL_BlitSurface(text.text, NULL, screen, &text.position);
 		SDL_BlitSurface(note, NULL, screen, &positionNote);
 		SDL_BlitSurface(loop, NULL, screen, &positionLoop);
-		if (i != 0 && once<=1) 
+		if (i != 0 && once <= 1)
 		{
 			SDL_SetAlpha(black, SDL_SRCALPHA, i);
-			i --;
+			i--;
 		}
 		else
 		{
 			SDL_SetAlpha(black, SDL_SRCALPHA, 0);
 		}
-		
 
 		SDL_BlitSurface(black, NULL, screen, &position_black);
 		SDL_Flip(screen);
-
 	}
 	SDL_FreeSurface(backgroundP);
 	for (choice = 0; choice < 5; choice++)

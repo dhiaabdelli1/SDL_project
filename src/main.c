@@ -60,6 +60,9 @@ void main(int argc, char *argv[])
         case GAME_LOAD:
             game_load(&safwen, &background, &etat, screen, &parameter, &c);
             break;
+        case CHEAT:
+            cheat(screen,&etat);
+            break;
         case EXIT:
             continuer = 0;
             break;
