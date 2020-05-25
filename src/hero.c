@@ -222,8 +222,6 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 		static float accel = 0;
 		static int tanguiza = -1;
 
-		static int sur = 0;
-
 		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
 		{
 			printf("%s", Mix_GetError());
@@ -318,7 +316,6 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 						h->position.x = 0;
 				}
 			}
-			printf("SUR: %d\n", sur);
 			SDL_EnableKeyRepeat(2, 2);
 			while (SDL_PollEvent(&event))
 			{
@@ -413,10 +410,13 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 	}
 	fclose(f);
 
-	initialiser_text(&d->text, d->script[0], 100, 80, 15);
+	initialiser_text(&d->text, d->script[0], 100, 80, 30);
+	d->text.position.x = 300;
+	d->text.position.y = 530;
 
 	d->line = 0;
 	d->text.text = NULL;
+	d->done = 1;
 	if (c == SAFWEN)
 		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
 	else if (c == OMAR)
@@ -430,58 +430,86 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 	d->pos_hero_dialogue.y = SCREEN_HEIGHT - d->hero_dialogue->h;
 }
 
-void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
+void dialogue_choice(dialogue *d, SDL_Surface *ecran, int first_line)
 {
 	static int tempsActuel = 0;
 	static int tempsPrecedent = 0;
 	static int once = 0;
-	static int once_2 = 0;
 
-	d->text.position.x = 300;
-	d->text.position.y = 530;
-	if (h.position.x >= 600 && h.position.x < 1900 && d->line < 5)
-	{
-		once++;
-		tempsActuel = SDL_GetTicks();
-		if (tempsActuel - tempsPrecedent > 3000)
-		{
-			d->text.font = TTF_OpenFont("../fonts/chalk_2.ttf", 30);
-			d->text.text = TTF_RenderText_Blended(d->text.font, d->script[d->line], d->text.color);
-			d->line++;
-			tempsPrecedent = tempsActuel;
-		}
-		if (once == 1)
-		{
+	printf("ONCE: %d\n", once);
 
-			d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
-			d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
-			SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
-		}
-	}
-
-	else if (h.position.x >= 2000 && h.position.x < 2600 && d->line < 8)
-	{
-		once_2++;
-		tempsActuel = SDL_GetTicks();
-		if (tempsActuel - tempsPrecedent > 3000)
-		{
-			d->text.font = TTF_OpenFont("../fonts/chalk_2.ttf", 30);
-			d->text.text = TTF_RenderText_Blended(d->text.font, d->script[d->line], d->text.color);
-			d->line++;
-			tempsPrecedent = tempsActuel;
-		}
-		if (once_2 ==1)
-		{
-			d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
-			d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
-			SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
-		}
-	}
+	printf("LINE: %d\n", d->line);
+	if (d->line > first_line - 1)
+		once = 1;
 	else
 	{
+		once = 0;
+	}
+
+	if (once == 0)
+	{
+		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
+		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+		once = 1;
+		d->done = 0;
+		d->line = first_line - 1;
+	}
+
+	if (!d->done)
+	{
+		printf("YUP\n");
+		tempsActuel = SDL_GetTicks();
+		if (tempsActuel - tempsPrecedent > 2000)
+		{
+			d->text.text = TTF_RenderText_Blended(d->text.font, d->script[d->line], d->text.color);
+			d->line++;
+			tempsPrecedent = tempsActuel;
+		}
+	}
+	if (d->script[d->line - 1][0] == 'x')
+	{
+		d->done = 1;
+		once = 0;
+	}
+}
+
+void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
+{
+
+	static int reached = 0;
+	printf("DONE: %d\n", d->done);
+	if (h.position.x >= 600 && h.position.x < 1680)
+	{
+		reached = 1;
+	}
+	else if (h.position.x >= 2000 && h.position.x < 2600)
+	{
+		reached = 2;
+	}
+	else if (h.position.x >= 1700 && h.position.x < 1900  && h.position.y>=1500)
+		reached = 3;
+
+	//else
+	//	reached=0;
+
+	switch (reached)
+	{
+	case 1:
+		dialogue_choice(d, ecran, 1);
+		break;
+	case 2:
+		printf("FUCK\n");
+		dialogue_choice(d, ecran, 12);
+		break;
+	case 3:
+		dialogue_choice(d, ecran, 8);
+		break;
+	}
+
+	if (d->done)
+	{
 		d->text.text = NULL;
-		tempsActuel = 0;
-		tempsPrecedent = 0;
 		d->dialogue_box = NULL;
 		d->hero_dialogue = NULL;
 	}

@@ -71,10 +71,12 @@ typedef struct Hero
 typedef struct Dialogue
 {
     text text;
-    char script[7][30];
+    char script[17][40];
     SDL_Surface *dialogue_box,*hero_dialogue;
     SDL_Rect pos_dialogue_box,pos_hero_dialogue;
     int line;
+    int done;
+    int once;
 }dialogue;
 
 void initialiser_hero(hero *h, char name[20]);
@@ -84,6 +86,7 @@ void afficher_hero(hero h, SDL_Surface *screen,background b);
 void free_hero(hero *h);
 
 void initialiser_dialogue(dialogue *d, SDL_Surface *ecran,character c);
+void dialogue_choice(dialogue *d, SDL_Surface *ecran, int first_line);
 void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran);
 void afficher_dialogue(dialogue d, SDL_Surface *ecran);
 #endif

@@ -57,7 +57,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 		deplacer_hero(&safwen, &background, &Jcontinuer, c, platforme);
 		CollisionParfaite(&safwen, background, platforme);
 
-		save_game(safwen, background, c);
+		//save_game(safwen, background, c);
 
 		if (abs(safwen.position.x - enemie.position.x) <= 250 && abs(safwen.position.y - enemie.position.y) >= 0 && abs(safwen.position.y - enemie.position.y) <= 50)
 			attack_entite(&enemie, &safwen);
@@ -101,6 +101,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 				SDL_Delay(2000);
 				(*etat) = GAME_OVER;
 				Jcontinuer = 0;
+				dialogue.done=1;
 			}
 		}
 		afficher_hero(safwen, ecran, background);
