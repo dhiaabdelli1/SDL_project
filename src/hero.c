@@ -411,7 +411,7 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 	fclose(f);
 
 	initialiser_text(&d->text, d->script[0], 100, 80, 30);
-	d->text.position.x = 300;
+	d->text.position.x = 280;
 	d->text.position.y = 530;
 
 	d->line = 0;
