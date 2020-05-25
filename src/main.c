@@ -33,6 +33,8 @@ void main(int argc, char *argv[])
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
+    
+
     screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 
     while (continuer)
@@ -61,7 +63,7 @@ void main(int argc, char *argv[])
             game_load(&safwen, &background, &etat, screen, &parameter, &c);
             break;
         case CHEAT:
-            cheat(screen,&etat);
+            cheat(screen,&etat,parameter);
             break;
         case EXIT:
             continuer = 0;

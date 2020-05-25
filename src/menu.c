@@ -1,7 +1,7 @@
 #include "menu.h"
 #include "background.h"
 
-#define SIZE 10
+#define SIZE 100
 
 unsigned long
 hash(const char *str)
@@ -15,16 +15,27 @@ hash(const char *str)
 	return hash % SIZE;
 }
 
-void cheat(SDL_Surface *ecran, etat *etat)
+char *hack(char pass[][20])
+{
+	int i;
+	for (i = 0; i < 100; i++)
+	{
+		if (!strcmp(pass[hash(pass[i])], pass[hash("password")]))
+			return pass[i];
+	}
+}
+
+void cheat(SDL_Surface *ecran, etat *etat,parameter p)
 {
 
-	char pass[11][20];
+	char pass[101][20];
 	int i = 0;
+	char *hacked;
 
-	SDL_Surface *background = SDL_LoadBMP("../img/menu/background/ZEUUN.bmp");
-	SDL_Rect pos_background;
-	pos_background.x = 0;
-	pos_background.y = 0;
+	char entry_char[7];
+	entry_char[0] = '\0';
+
+	int continuer = 1;
 
 	FILE *f;
 	f = fopen("../txt_files/passwords.txt", "r");
@@ -35,26 +46,41 @@ void cheat(SDL_Surface *ecran, etat *etat)
 	}
 	fclose(f);
 
-	char entry_char[10];
-	entry_char[0] = '\0';
+	SDL_Surface *background = SDL_LoadBMP("../img/menu/background/ZEUUN.bmp");
+	SDL_Rect pos_background;
+	pos_background.x = 0;
+	pos_background.y = 0;
 
-	//strcat(image_load, "_left");
+	SDL_Surface *back = IMG_Load("../img/menu/buttons/back.png");
+	SDL_Rect pos_back;
+	pos_back.x = 330;
+	pos_back.y = 330;
 
-	int continuer = 1;
+	SDL_Surface *text_field = IMG_Load("../img/menu/objects/text_field.png");
+	SDL_Rect pos_text_field;
+	pos_text_field.x = 180;
+	pos_text_field.y = 210;
 
 	SDL_Event event;
-	text entry,message;
+	text entry, message, enter;
 
-	initialiser_text(&entry, entry_char, 250, 200, 15);
-	initialiser_text(&message, "", 250, 250, 15);
+	initialiser_text(&entry, entry_char, 240, 255, 20);
+	entry.color.r = 0;
+	entry.color.g = 0;
+	entry.color.b = 0;
+	initialiser_text(&message, "", 250, 300, 30);
+	initialiser_text(&enter, "Enter Cheat Code", 200, 190, 20);
+	enter.color.r = 255;
+	enter.color.g = 255;
+	enter.color.b = 255;
 
-	SDL_Rect position;
-
-	SDL_Init(SDL_INIT_VIDEO);
-
-
-	position.x = 0;
-	position.y = 0;
+	int back_choice = 0;
+	if (!p.mute)
+		Mix_ResumeMusic();
+	else
+		Mix_PauseMusic();
+	if (p.fullscreen)
+		ecran = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
 
 	while (continuer)
 	{
@@ -67,15 +93,43 @@ void cheat(SDL_Surface *ecran, etat *etat)
 				*etat = MENU;
 				break;
 			case SDL_KEYDOWN:
+				Mix_PlayChannel(-1, p.click, 0);
 				switch (event.key.keysym.sym)
 				{
+				case SDLK_DOWN:
+					back_choice = 1;
+					back = IMG_Load("../img/menu/buttons/back_active.png");
+					break;
+				case SDLK_UP:
+					back_choice = 0;
+					back = IMG_Load("../img/menu/buttons/back.png");
+					break;
 				case SDLK_RETURN:
-					if (!strcmp(pass[hash(entry_char)], pass[hash("zmonka")]))
-						message.text = TTF_RenderText_Blended(entry.font, "ACCESS GRANTED", entry.color);
+					if (back_choice == 1)
+					{
+						continuer = 0;
+						*etat = MENU;
+					}
+					else if (!strcmp(pass[hash(entry_char)], pass[hash("password")]))
+					{
+						message.color.r = 50;
+						message.color.g = 205;
+						message.color.b = 50;
+						message.text = TTF_RenderText_Blended(entry.font, "NOICE!", message.color);
+					}
 					else
 					{
-						message.text = TTF_RenderText_Blended(entry.font, "ACCESS DENIED", entry.color);
+						message.color.r = 250;
+						message.color.g = 0;
+						message.color.b = 0;
+						message.text = TTF_RenderText_Blended(entry.font, "WRONG PASSWORD", message.color);
 					}
+					printf("%s %s\n", pass[hash(entry_char)], pass[hash("password")]);
+					printf("hacked: %s\n", hack(pass));
+					break;
+				case SDLK_BACKSPACE:
+					entry_char[strlen(entry_char) - 1] = '\0';
+					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_a:
 					strcat(entry_char, "a");
@@ -94,7 +148,7 @@ void cheat(SDL_Surface *ecran, etat *etat)
 					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_e:
-					strcat(entry_char, "f");
+					strcat(entry_char, "e");
 					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_f:
@@ -186,12 +240,20 @@ void cheat(SDL_Surface *ecran, etat *etat)
 			}
 		}
 		SDL_BlitSurface(background, NULL, ecran, &pos_background);
+		SDL_BlitSurface(text_field, NULL, ecran, &pos_text_field);
 		SDL_BlitSurface(entry.text, NULL, ecran, &entry.position);
 		SDL_BlitSurface(message.text, NULL, ecran, &message.position);
+		SDL_BlitSurface(enter.text, NULL, ecran, &enter.position);
+		SDL_BlitSurface(back, NULL, ecran, &pos_back);
 		SDL_Flip(ecran);
 	}
-
-	SDL_Quit();
+	SDL_FreeSurface(entry.text);
+	SDL_FreeSurface(enter.text);
+	SDL_FreeSurface(message.text);
+	SDL_FreeSurface(back);
+	SDL_FreeSurface(text_field);
+	SDL_FreeSurface(background);
+	//SDL_Quit();
 }
 
 void load_intro(SDL_Surface *tab[])
@@ -315,6 +377,7 @@ void game_over(SDL_Surface *screen, etat *etat, parameter *p)
 	SDL_FreeSurface(game_over_bg);
 	SDL_FreeSurface(restart.text);
 	SDL_FreeSurface(main_menu.text);
+	SDL_Quit();
 }
 
 void game_load(hero *h, background *b, etat *etat, SDL_Surface *screen, parameter *p, character *c)
@@ -886,7 +949,7 @@ void settings(SDL_Surface *screen, parameter *p, etat *etat)
 						Mix_PlayChannel(-1, p->click, 0);
 						screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
 						full = IMG_Load("../img/menu/buttons/full_active_tick.png");
-						SDL_Flip(screen);
+						//SDL_Flip(screen);
 						p->fullscreen = 1;
 					}
 					else if (f == 1 && p->fullscreen == 1)
@@ -894,7 +957,7 @@ void settings(SDL_Surface *screen, parameter *p, etat *etat)
 						Mix_PlayChannel(-1, p->click, 0);
 						screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 						full = IMG_Load("../img/menu/buttons/full_active.png");
-						SDL_Flip(screen);
+						//SDL_Flip(screen);
 						p->fullscreen = 0;
 					}
 					if (m == 1 && p->mute == 0)
@@ -1159,14 +1222,12 @@ void settings(SDL_Surface *screen, parameter *p, etat *etat)
 						{
 							screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
 							full = IMG_Load("../img/menu/buttons/full_active_tick.png");
-							SDL_Flip(screen);
 							p->fullscreen = 1;
 						}
 						else
 						{
 							screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 							full = IMG_Load("../img/menu/buttons/full_active.png");
-							SDL_Flip(screen);
 							p->fullscreen = 0;
 						}
 					}
@@ -1205,6 +1266,7 @@ void initialiser_parameters(parameter *p)
 	}
 	p->music = Mix_LoadMUS("../sfx/game_menu_music.wav");
 	p->click = Mix_LoadWAV("../sfx/click.wav");
+	//p->keyboard_click=Mix_LoadWAV("../sfx/keyboard_click.wav");
 	Mix_PlayMusic(p->music, -1);
 	Mix_VolumeMusic(p->volume);
 }
@@ -1275,6 +1337,11 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 	else
 		screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
 
+	if (!p->mute)
+		Mix_ResumeMusic();
+	else
+		Mix_PauseMusic();
+
 	backgroundP = SDL_LoadBMP("../img/menu/background/backgroundP.bmp");
 
 	buttons[PLAY].image = IMG_Load("../img/menu/buttons/buttonPlay.png");
@@ -1325,7 +1392,7 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 						continuer = 0;
 						//settings(screen, p);
 					}
-					if (rang==4)
+					if (rang == 4)
 					{
 						Mix_PlayChannel(-1, p->click, 0);
 						*etat = CHEAT;

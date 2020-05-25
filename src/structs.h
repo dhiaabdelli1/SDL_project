@@ -32,6 +32,7 @@ typedef struct Parameter
 {
     Mix_Music *music;
     Mix_Chunk *click;
+    Mix_Chunk *keyboard_click;
     int volume;
     int fullscreen;
     int mute;

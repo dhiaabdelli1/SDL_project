@@ -30,7 +30,7 @@ void initialiser_hero(hero *h, char name[20])
 	strcat(image_load, ".png");
 	h->sprite.image = IMG_Load(image_load);
 
-	printf("%s\n", image_load);
+	//printf("%s\n", image_load);
 	//end load function
 	h->sprite.frame.x = 0;
 	h->sprite.frame.y = 0;
@@ -436,9 +436,9 @@ void dialogue_choice(dialogue *d, SDL_Surface *ecran, int first_line)
 	static int tempsPrecedent = 0;
 	static int once = 0;
 
-	printf("ONCE: %d\n", once);
+	//printf("ONCE: %d\n", once);
 
-	printf("LINE: %d\n", d->line);
+	//printf("LINE: %d\n", d->line);
 	if (d->line > first_line - 1)
 		once = 1;
 	else
@@ -458,7 +458,7 @@ void dialogue_choice(dialogue *d, SDL_Surface *ecran, int first_line)
 
 	if (!d->done)
 	{
-		printf("YUP\n");
+		//printf("YUP\n");
 		tempsActuel = SDL_GetTicks();
 		if (tempsActuel - tempsPrecedent > 2000)
 		{
@@ -478,7 +478,7 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
 {
 
 	static int reached = 0;
-	printf("DONE: %d\n", d->done);
+	//printf("DONE: %d\n", d->done);
 	if (h.position.x >= 600 && h.position.x < 1680)
 	{
 		reached = 1;
@@ -499,7 +499,7 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
 		dialogue_choice(d, ecran, 1);
 		break;
 	case 2:
-		printf("FUCK\n");
+		//printf("FUCK\n");
 		dialogue_choice(d, ecran, 12);
 		break;
 	case 3:
