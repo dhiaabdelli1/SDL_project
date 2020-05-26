@@ -405,7 +405,7 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 	}
 	while (!feof(f))
 	{
-		fgets(d->script[i], 30, f);
+		fgets(d->script[i], 50, f);
 		i++;
 	}
 	fclose(f);
@@ -416,7 +416,8 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 
 	d->line = 0;
 	d->text.text = NULL;
-	d->done = 1;
+	d->talking = 0;
+	d->first_time = 0;
 	if (c == SAFWEN)
 		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
 	else if (c == OMAR)
@@ -430,88 +431,97 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 	d->pos_hero_dialogue.y = SCREEN_HEIGHT - d->hero_dialogue->h;
 }
 
-void dialogue_choice(dialogue *d, SDL_Surface *ecran, int first_line)
+
+void linear_dialogue(dialogue *d, SDL_Surface *ecran)
 {
 	static int tempsActuel = 0;
 	static int tempsPrecedent = 0;
-	static int once = 0;
 
-	//printf("ONCE: %d\n", once);
-
-	//printf("LINE: %d\n", d->line);
-	if (d->line > first_line - 1)
-		once = 1;
-	else
-	{
-		once = 0;
-	}
-
-	if (once == 0)
+	if (d->script[d->line - 1][0] == 'x' || d->line == 0)
 	{
 		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
 		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
 		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
-		once = 1;
-		d->done = 0;
-		d->line = first_line - 1;
+		d->talking = 1;
 	}
-
-	if (!d->done)
+	printf("TALKING: %d\n", d->talking);
+	if (d->talking)
 	{
-		//printf("YUP\n");
 		tempsActuel = SDL_GetTicks();
 		if (tempsActuel - tempsPrecedent > 2000)
 		{
 			d->text.text = TTF_RenderText_Blended(d->text.font, d->script[d->line], d->text.color);
-			d->line++;
 			tempsPrecedent = tempsActuel;
+			if (d->script[d->line][0] == 'x')
+			{
+				d->talking = 0;
+			}
+			else
+			{
+				d->line++;
+			}
 		}
-	}
-	if (d->script[d->line - 1][0] == 'x')
-	{
-		d->done = 1;
-		once = 0;
 	}
 }
 
-void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran)
+void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran, heure temps)
 {
 
 	static int reached = 0;
-	//printf("DONE: %d\n", d->done);
-	if (h.position.x >= 600 && h.position.x < 1680)
-	{
-		reached = 1;
-	}
-	else if (h.position.x >= 2000 && h.position.x < 2600)
-	{
-		reached = 2;
-	}
-	else if (h.position.x >= 1700 && h.position.x < 1900  && h.position.y>=1500)
-		reached = 3;
+	int passage;
+	static int once = 0;
 
-	//else
-	//	reached=0;
+	passage = reached;
 
+	if (h.position.x >= 600 && h.position.x < 1680 && once != 1)
+	{
+
+		once = 1;
+		if (reached != 2)
+			reached++;
+	}
+	else if (h.position.x >= 2000 && h.position.x < 2600 && once != 2)
+	{
+		once = 2;
+		if (reached != 2)
+			reached++;
+	}
 	switch (reached)
 	{
 	case 1:
-		dialogue_choice(d, ecran, 1);
+		linear_dialogue(d, ecran);
 		break;
 	case 2:
-		//printf("FUCK\n");
-		dialogue_choice(d, ecran, 12);
-		break;
-	case 3:
-		dialogue_choice(d, ecran, 8);
+		if (reached > passage)
+			d->line++;
+		linear_dialogue(d, ecran);
 		break;
 	}
 
-	if (d->done)
+	printf("LINE: %d\n", d->line);
+	printf("REACHED: %d\n", reached);
+
+	if (!d->talking)
 	{
 		d->text.text = NULL;
 		d->dialogue_box = NULL;
 		d->hero_dialogue = NULL;
+	}
+
+	if (temps.secondes>=20 && temps.secondes<25)
+	{
+		d->text.text = TTF_RenderText_Blended(d->text.font, d->script[10], d->text.color);
+		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
+		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+	}
+	if (h.position.x>=1690 && h.position.x<=1990 && h.position.y>=1560)
+	{
+
+		d->text.text = TTF_RenderText_Blended(d->text.font, d->script[11], d->text.color);
+		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
+		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
+		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
 	}
 }
 

@@ -135,10 +135,10 @@ void initialiser_instructions(text instructions[], int n)
 	}
 	fclose(f);
 
-	initialiser_text(&instructions[0],script[0],488,1360,30);
-	initialiser_text(&instructions[1],script[1],1400,1300,30);
-	initialiser_text(&instructions[2],script[2],1800,1540,30);
-	initialiser_text(&instructions[3],script[3],2050,2300,30);
+	initialiser_text(&instructions[0], script[0], 488, 1360, 30);
+	initialiser_text(&instructions[1], script[1], 1400, 1300, 30);
+	initialiser_text(&instructions[2], script[2], 1800, 1540, 30);
+	initialiser_text(&instructions[3], script[3], 2050, 2300, 30);
 }
 void afficher_instructions(text instructions[], int n, background b, SDL_Surface *ecran)
 {
@@ -152,3 +152,71 @@ void afficher_instructions(text instructions[], int n, background b, SDL_Surface
 	}
 }
 
+void init_timer(timer *t)
+{
+	t->startTicks = 0;
+	t->pausedTicks = 0;
+	t->paused = 0;
+	t->started = 0;
+}
+void start_timer(timer *t)
+{
+	t->started = 1;
+	t->paused = 0;
+	t->startTicks = SDL_GetTicks();
+}
+void stop_timer(timer *t)
+{
+	t->paused = 0;
+	t->started = 0;
+}
+void get_time(timer t, heure *h)
+{
+	int x;
+	if (t.started)
+	{
+		if (t.paused)
+		{
+			x = t.pausedTicks / 1000;
+		}
+
+		else
+		{
+			x = (SDL_GetTicks() - t.startTicks) / 1000;
+		}
+		h->heures = x / 3600;
+		h->minutes = x / 60;
+		h->secondes = x % 60;
+	}
+	else
+	{
+		h->heures = 0;
+		h->minutes = 0;
+		h->secondes = 0;
+	}
+	
+}
+void pause_timer(timer *t)
+{
+	if (t->started && !t->paused)
+	{
+		t->paused = 1;
+		t->pausedTicks = SDL_GetTicks() - t->startTicks;
+	}
+}
+void resume_timer(timer *t)
+{
+	if (t->paused)
+	{
+		t->paused = 0;
+
+		t->startTicks = SDL_GetTicks() - t->pausedTicks;
+		t->pausedTicks = 0;
+	}
+}
+
+void show_time(timer t,heure *h)
+{
+	get_time(t,h);
+	printf("%02d:%02d:%02d\n",h->heures,h->minutes,h->secondes);
+}

@@ -22,6 +22,8 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 	text instructions[4];
 	power_up coins[2];
 	heart hearts[2];
+	timer timer;
+	heure heure;
 
 	SDL_Surface *black = IMG_Load("../img/black.jpg");
 
@@ -29,6 +31,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 	position_black.x = 0;
 	position_black.y = 0;
 
+	init_timer(&timer);
 	initialiser_dialogue(&dialogue, ecran, c);
 	initialiser_background(&background);
 	initialiser_entite(&enemie);
@@ -50,12 +53,33 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 		SDL_WM_ToggleFullScreen(ecran);
 	int passage_boucle = 0;
 
+	start_timer(&timer);
+
 	while (Jcontinuer)
 	{
 		deplacer_hero(&safwen, &background, &Jcontinuer, c, platforme);
 		CollisionParfaite(&safwen, background, platforme);
 
+
 		//save_game(safwen, background, c);
+
+		printf("STATE: %d\n",safwen.state);
+
+		if (safwen.state==IDLE)
+		{
+			resume_timer(&timer);
+		}
+		else 
+		{
+			pause_timer(&timer);
+			start_timer(&timer);
+		}
+		if (heure.secondes>=20)
+			printf("Hello!?");
+			
+
+		show_time(timer,&heure);
+		
 
 		if (abs(safwen.position.x - enemie.position.x) <= 250 && abs(safwen.position.y - enemie.position.y) >= 0 && abs(safwen.position.y - enemie.position.y) <= 50)
 			attack_entite(&enemie, &safwen);
@@ -65,7 +89,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 		coins_interaction(coins, 2, &safwen);
 		hearts_interaction(hearts, 1, &safwen);
 
-		playing_dialogue(&dialogue, safwen, ecran);
+		playing_dialogue(&dialogue, safwen, ecran,heure);
 
 		animer_entite(&enemie);
 		animer_hero(&safwen, safwen.state, c);
