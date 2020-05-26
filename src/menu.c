@@ -25,14 +25,14 @@ char *hack(char pass[][20])
 	}
 }
 
-void cheat(SDL_Surface *ecran, etat *etat,parameter p)
+void cheat(SDL_Surface *ecran, etat *etat, parameter p)
 {
 
 	char pass[101][20];
 	int i = 0;
 	char *hacked;
 
-	char entry_char[7];
+	char entry_char[15];
 	entry_char[0] = '\0';
 
 	int continuer = 1;
@@ -129,113 +129,87 @@ void cheat(SDL_Surface *ecran, etat *etat,parameter p)
 					break;
 				case SDLK_BACKSPACE:
 					entry_char[strlen(entry_char) - 1] = '\0';
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_a:
 					strcat(entry_char, "a");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_b:
 					strcat(entry_char, "b");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_c:
 					strcat(entry_char, "c");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_d:
 					strcat(entry_char, "d");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_e:
 					strcat(entry_char, "e");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_f:
 					strcat(entry_char, "f");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_g:
 					strcat(entry_char, "g");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_h:
 					strcat(entry_char, "h");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_i:
 					strcat(entry_char, "i");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_j:
 					strcat(entry_char, "j");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_k:
 					strcat(entry_char, "k");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_l:
 					strcat(entry_char, "l");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_m:
 					strcat(entry_char, "m");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_n:
 					strcat(entry_char, "n");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_o:
 					strcat(entry_char, "o");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_p:
 					strcat(entry_char, "p");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_q:
 					strcat(entry_char, "q");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_r:
 					strcat(entry_char, "r");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_s:
 					strcat(entry_char, "s");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_t:
 					strcat(entry_char, "t");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_u:
 					strcat(entry_char, "u");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_v:
 					strcat(entry_char, "v");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_w:
 					strcat(entry_char, "w");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_x:
 					strcat(entry_char, "x");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_y:
 					strcat(entry_char, "y");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				case SDLK_z:
 					strcat(entry_char, "z");
-					entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 					break;
 				}
+				entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
 				break;
 			}
 		}
@@ -260,9 +234,9 @@ void load_intro(SDL_Surface *tab[])
 {
 	int i;
 	char image[50];
-	for (i = 0; i < 189; i++)
+	for (i = 0; i < 101; i++)
 	{
-		sprintf(image, "../img/intro/%d.png", i + 1);
+		sprintf(image, "../img/intro/(%d).jpg", i + 1);
 		tab[i] = IMG_Load(image);
 	}
 }
@@ -283,7 +257,7 @@ void play_intro(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat)
 		tempsPrecedent = tempsActuel;
 	}
 
-	if (i == 189)
+	if (i == 101)
 		*etat = MENU;
 	else
 		*etat = INTRO;
