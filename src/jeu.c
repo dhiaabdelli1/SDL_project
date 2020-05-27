@@ -15,7 +15,6 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 
 	entite enemie;
 	enigme enigme_m;
-	power_up coin_1, coin_2;
 	platforme platforme;
 	text game_over_txt;
 	dialogue dialogue;
@@ -24,6 +23,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 	heart hearts[2];
 	timer timer;
 	heure heure;
+	text temps;
 
 	SDL_Surface *black = IMG_Load("../img/black.jpg");
 
@@ -43,6 +43,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 	initialiser_hearts(hearts, 1);
 
 	initialiser_text(&game_over_txt, "GAME OVER", SCREEN_WIDTH / 2 - 250, SCREEN_HEIGHT / 2, 90);
+	initialiser_text(&temps,"",(SCREEN_WIDTH/2)-85,0,30);
 
 	p->music = Mix_LoadMUS("../sfx/alter-ego.mp3");
 	if (!p->mute)
@@ -78,7 +79,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 			printf("Hello!?");
 			
 
-		show_time(timer,&heure);
+		show_time(&timer);
 		
 
 		if (abs(safwen.position.x - enemie.position.x) <= 250 && abs(safwen.position.y - enemie.position.y) >= 0 && abs(safwen.position.y - enemie.position.y) <= 50)
@@ -123,11 +124,12 @@ void jeu(SDL_Surface *ecran, etat *etat, hero safwen, parameter *p, character c,
 				SDL_Delay(2000);
 				(*etat) = GAME_OVER;
 				Jcontinuer = 0;
-				dialogue.done = 1;
+				dialogue.talking = 0;
 			}
 		}
 		afficher_hero(safwen, ecran, background);
 		afficher_dialogue(dialogue, ecran);
+		afficher_temps(&temps,&timer,ecran);
 		SDL_Flip(ecran);
 
 		/*printf("%d\t%d\n", safwen.vie_hero.nb_vie, safwen.score_hero.valeur_score);

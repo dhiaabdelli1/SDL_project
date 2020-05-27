@@ -170,29 +170,29 @@ void stop_timer(timer *t)
 	t->paused = 0;
 	t->started = 0;
 }
-void get_time(timer t, heure *h)
+void get_time(timer *t)
 {
 	int x;
-	if (t.started)
+	if (t->started)
 	{
-		if (t.paused)
+		if (t->paused)
 		{
-			x = t.pausedTicks / 1000;
+			x = t->pausedTicks / 1000;
 		}
 
 		else
 		{
-			x = (SDL_GetTicks() - t.startTicks) / 1000;
+			x = (SDL_GetTicks() - t->startTicks) / 1000;
 		}
-		h->heures = x / 3600;
-		h->minutes = x / 60;
-		h->secondes = x % 60;
+		t->time.heures = x / 3600;
+		t->time.minutes = x / 60;
+		t->time.secondes = x % 60;
 	}
 	else
 	{
-		h->heures = 0;
-		h->minutes = 0;
-		h->secondes = 0;
+		t->time.heures = 0;
+		t->time.minutes = 0;
+		t->time.secondes = 0;
 	}
 	
 }
@@ -215,8 +215,16 @@ void resume_timer(timer *t)
 	}
 }
 
-void show_time(timer t,heure *h)
+void show_time(timer *t)
 {
-	get_time(t,h);
-	printf("%02d:%02d:%02d\n",h->heures,h->minutes,h->secondes);
+	get_time(t);
+	printf("%02d:%02d:%02d\n",t->time.heures,t->time.minutes,t->time.secondes);
+}
+
+void afficher_temps(text *t,timer *timer,SDL_Surface *ecran)
+{
+	static char cont[20];
+	sprintf(cont, "%02d:%02d:%02d\n",timer->time.heures,timer->time.minutes,timer->time.secondes);
+	t->text=TTF_RenderText_Blended(t->font, cont, t->color);
+	SDL_BlitSurface(t->text,NULL,ecran,&t->position);
 }

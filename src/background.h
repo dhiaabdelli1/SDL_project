@@ -33,20 +33,23 @@ typedef struct Text
 	int size;
 } text;
 
-typedef struct Timer
-{
-	int startTicks;
-	int pausedTicks;
-	int paused;
-	int started;
-}timer;
-
 typedef struct Heure
 {
 	int heures;
 	int minutes;
 	int secondes;
 }heure;
+
+typedef struct Timer
+{
+	int startTicks;
+	int pausedTicks;
+	int paused;
+	int started;
+	heure time;
+}timer;
+
+
 //background
 void scrolling(background *b, SDL_Event event);
 void initialiser_background(background *b);
@@ -69,9 +72,10 @@ void afficher_instructions(text instructions[], int n,background b,SDL_Surface *
 void init_timer(timer *t);
 void start_timer(timer *t);
 void stop_timer(timer *t);
-void get_time(timer t, heure *h);
+void get_time(timer *t);
 void pause_timer(timer *t);
 void resume_timer(timer *t);
-void show_time(timer t,heure *h);
+void show_time(timer *t);
+void afficher_temps(text *t,timer *timer,SDL_Surface *ecran);
 
 #endif
