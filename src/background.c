@@ -4,6 +4,7 @@ void initialiser_background(background *b)
 {
 	b->image = IMG_Load("../img/background/background_new.jpg");
 	b->background_mask = IMG_Load("../img/background/background_new_masque.jpg");
+	b->foreground = IMG_Load("../img/background/foreground.png");
 
 	b->posCamera.x = 400;
 	b->posCamera.y = 900;
@@ -14,9 +15,14 @@ void initialiser_background(background *b)
 	b->position_background_mask.y = 900;
 	b->position_background_mask.w = SCREEN_WIDTH;
 	b->position_background_mask.h = SCREEN_HEIGHT;
+
+	b->pos_foreground.x = 400;
+	b->pos_foreground.y = 900;
+	b->pos_foreground.w = SCREEN_WIDTH;
+	b->pos_foreground.h = SCREEN_HEIGHT;
 }
 
-void initialiser_platforme(platforme *p, int x, int y, int interval,int sens)
+void initialiser_platforme(platforme *p, int x, int y, int interval, int sens)
 {
 	p->image = IMG_Load("../img/background/platform.png");
 	p->position.x = x;
@@ -25,19 +31,17 @@ void initialiser_platforme(platforme *p, int x, int y, int interval,int sens)
 	p->pos_init.y = y;
 	p->interval = interval;
 	p->sens = sens;
-	p->interval=interval;
+	p->interval = interval;
 }
 
 void initialiser_plats(platforme plats[], int n)
 {
-	initialiser_platforme(&plats[0], 1917, 1136, 740,1);
-	initialiser_platforme(&plats[1], 3000, 1136, 550,-1);
+	initialiser_platforme(&plats[0], 1917, 1136, 740, 1);
+	initialiser_platforme(&plats[1], 3000, 1136, 550, -1);
 
-	
-	initialiser_platforme(&plats[2], 450, 850, 80,1);
-	initialiser_platforme(&plats[3], 700, 750, 200,1);
-	initialiser_platforme(&plats[4], 950, 650, 150,1);
-
+	initialiser_platforme(&plats[2], 450, 850, 80, 1);
+	initialiser_platforme(&plats[3], 700, 750, 200, 1);
+	initialiser_platforme(&plats[4], 950, 650, 150, 1);
 }
 
 void initialiser_text(text *i, char message[40], int x, int y, int size)
@@ -87,7 +91,6 @@ void initialiser_instructions(text instructions[], int n)
 	initialiser_text(&instructions[2], script[2], 1310, 1250, 30);
 	initialiser_text(&instructions[3], script[3], 2700, 1355, 30);
 	initialiser_text(&instructions[4], script[4], 3720, 1100, 30);
-
 }
 
 void afficher_background(background *b, SDL_Surface *screen)
@@ -95,6 +98,7 @@ void afficher_background(background *b, SDL_Surface *screen)
 
 	SDL_BlitSurface(b->background_mask, &b->position_background_mask, screen, NULL);
 	SDL_BlitSurface(b->image, &b->posCamera, screen, NULL);
+
 }
 void afficher_platformes(platforme plats[], background b, SDL_Surface *ecran, int n)
 {

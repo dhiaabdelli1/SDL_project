@@ -23,6 +23,8 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	int tempsActuel = 0;
 	int tempsPrecedent = 0;
 
+	SDL_Rect pos_rel;
+
 	platforme platformes[nb_platformes];
 	text game_over_txt;
 	dialogue dialogue = dial;
@@ -32,6 +34,8 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	timer timer;
 	heure heure;
 	text temps;
+
+	int plat_coll;
 
 	SDL_Surface *black = NULL;
 
@@ -68,8 +72,14 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	int saving = 0;
 	SDL_Surface *save_screen = NULL;
 	SDL_Rect pos_save_screen;
-	pos_save_screen.x = 200;
-	pos_save_screen.y = 200;
+	pos_save_screen.x = 280;
+	pos_save_screen.y = 280;
+
+	text save_text;
+	initialiser_text(&save_text, "", 315, 320, 10);
+	save_text.color.r = 0;
+	save_text.color.g = 0;
+	save_text.color.b = 0;
 
 	while (Jcontinuer)
 	{
@@ -77,7 +87,8 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 		deplacer_hero(safwen, &background, &Jcontinuer, c, platformes, &saving, nb_platformes);
 
 		CollisionParfaite(safwen, background);
-		collision_platforme(safwen, platformes, nb_platformes);
+
+		plat_coll = collision_platforme(safwen, platformes, nb_platformes);
 
 		for (i = 0; i < nb_platformes; i++)
 		{
@@ -86,16 +97,17 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			{
 				if (tempsActuel - tempsPrecedent > 10)
 				{
-					safwen->position.x += 1*platformes[i].sens;
+					safwen->position.x += 1 * platformes[plat_coll].sens;
 					tempsPrecedent = tempsActuel;
 				}
 			}
 		}
 
-		if (safwen->position.x >= 5100 && safwen->position.x <= 5340 && safwen->position.y >= 970 && safwen->position.y <= 1010)
+		//portal
+		if (safwen->position.x >= 5100 && safwen->position.x <= 5340 && safwen->position.y >= 1100 && safwen->position.y <= 1150)
 		{
 			safwen->position.x += 1200;
-			safwen->position.y += 800;
+			safwen->position.y += 600;
 		}
 
 		if (saving == 0)
@@ -104,6 +116,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			save_screen = NULL;
 			black = NULL;
 			once = 0;
+			save_text.text = TTF_RenderText_Blended(save_text.font, "", save_text.color);
 		}
 		else
 		{
@@ -112,6 +125,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 				save_screen = IMG_Load("../img/menu/objects/text_field.png");
 				black = IMG_Load("../img/black.jpg");
 				SDL_SetAlpha(black, SDL_SRCALPHA, 120);
+				save_text.text = TTF_RenderText_Blended(save_text.font, "Press y to confirm and q to quit", save_text.color);
 				once = 1;
 			}
 
@@ -188,10 +202,15 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			}
 		}
 		afficher_hero(*safwen, ecran, background);
+
+		pos_rel.x = background.pos_foreground.x - background.posCamera.x-400;
+		pos_rel.y = background.pos_foreground.x - background.posCamera.y-400;
+		SDL_BlitSurface(background.foreground, NULL, ecran,&pos_rel);
 		afficher_dialogue(dialogue, ecran);
 		afficher_temps(&temps, &timer, ecran);
 		SDL_BlitSurface(black, NULL, ecran, &position_black);
 		SDL_BlitSurface(save_screen, NULL, ecran, &pos_save_screen);
+		SDL_BlitSurface(save_text.text, NULL, ecran, &save_text.position);
 		SDL_BlitSurface(game_over_txt.text, NULL, ecran, &game_over_txt.position);
 		SDL_Flip(ecran);
 

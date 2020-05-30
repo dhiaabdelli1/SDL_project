@@ -12,9 +12,11 @@
 typedef struct Background
 {
 	SDL_Surface *image;
+	SDL_Surface *foreground;
 	SDL_Surface *background_mask;
 	SDL_Rect position_background_mask;
 	SDL_Rect posCamera;
+	SDL_Rect pos_foreground;
 	SDL_Surface *platform;
 	SDL_Rect pos_platform;
 } background;

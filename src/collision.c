@@ -109,7 +109,7 @@ void CollisionParfaite(hero *h, background b)
 	if (abs(h->position.y + h->sprite.image->h - b.image->h - b.posCamera.h) < 170)
 		h->collision_DOWN = 1;
 }
-void collision_platforme(hero *h, platforme plats[], int n)
+int collision_platforme(hero *h, platforme plats[], int n)
 {
 	static int i;
 	for (i = 0; i < n; i++)
@@ -118,6 +118,7 @@ void collision_platforme(hero *h, platforme plats[], int n)
 			{
 				h->collision_DOWN = 1;
 				h->collision_DOWN_PLAT=1;
+				return i;
 			}
 			
 		if (!(abs(h->position.y - plats[i].position.y - plats[i].image->h) > 5 || h->position.x > plats[i].position.x + plats[i].image->w || h->position.x <= plats[i].position.x))
