@@ -24,6 +24,7 @@ void main(int argc, char *argv[])
     hero safwen;
     background background;
     parameter parameter;
+    dialogue d;
 
     initialiser_parameters(&parameter);
 
@@ -48,7 +49,7 @@ void main(int argc, char *argv[])
             menu(screen, &etat, &parameter);
             break;
         case GAME:
-            jeu(screen, &etat, safwen, &parameter, c, background);
+            jeu(screen, &etat, &safwen, &parameter, c, background,d);
             break;
         case SETTING:
             settings(screen, &parameter, &etat);
@@ -60,7 +61,7 @@ void main(int argc, char *argv[])
             character_choice(&safwen, &etat, screen, &parameter, &c);
             break;
         case GAME_LOAD:
-            game_load(&safwen, &background, &etat, screen, &parameter, &c);
+            game_load(&safwen, &background, &etat, screen, &parameter, &c, &d);
             break;
         case CHEAT:
             cheat(screen,&etat,parameter);
@@ -72,5 +73,6 @@ void main(int argc, char *argv[])
     }
     Mix_FreeMusic(parameter.music);
     Mix_FreeChunk(parameter.click);
+    SDL_FreeSurface(screen);
     SDL_Quit();
 }

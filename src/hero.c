@@ -12,8 +12,9 @@ void initialiser_hero(hero *h, char name[20])
 
 	char image_load[40] = "";
 	char score_str[10] = "";
-	h->position.x = 500;
-	h->position.y = 1565;
+	//550 1450
+	h->position.x = 550;
+	h->position.y = 1450;
 
 	h->current_ground_position = h->position.y;
 
@@ -210,23 +211,29 @@ void animer_hero(hero *h, state movement, character c)
 void free_hero(hero *h)
 {
 	SDL_FreeSurface(h->sprite.image);
+	SDL_FreeSurface(h->vie_hero.heart);
+	SDL_FreeSurface(h->score_hero.texte_score);
+	TTF_CloseFont(h->score_hero.score_font);
 }
 
-void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platforme p)
+void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platforme plats[], int *saving, int n)
 {
 	if (h->sprite.image != NULL)
 	{
+		static int i;
 		int timeStepMs = 10; //if 20 it ruins mvt for some reason
 		static int timeLastMs, timeAccumulatedMs, timeDeltaMs, timeCurrentMs = 0;
 		static int current_ground_position;
 		static float accel = 0;
+		static float gravity = 0;
 		static int tanguiza = -1;
 
 		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
 		{
 			printf("%s", Mix_GetError());
 		}
-		Mix_Chunk *punch_sound;
+
+		static Mix_Chunk *punch_sound;
 		punch_sound = Mix_LoadWAV("../sfx/punch.wav");
 
 		SDL_Event event;
@@ -257,6 +264,8 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 				b->posCamera.x = 1;
 			if (b->posCamera.y < 0)
 				b->posCamera.y = 1;
+			if (b->posCamera.y >= b->image->h - SCREEN_HEIGHT)
+				b->posCamera.y = b->image->h - SCREEN_HEIGHT - 1;
 
 			Uint8 *keystates = SDL_GetKeyState(NULL);
 			if (h->position.y > h->current_ground_position - JUMP_HEIGHT && tanguiza == 0 && !h->collision_UP)
@@ -274,34 +283,41 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 			}
 			if (keystates[SDLK_RIGHT] || (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT) && (event.motion.x > h->position.x)))
 			{
+				if (h->direction == LEFT && accel >= 1)
+					accel = -2.5;
+
 				h->direction = RIGHT;
-				CollisionParfaite(h, *b, p);
+				CollisionParfaite(h, *b);
+				collision_platforme(h, plats, n);
 
 				if (!h->collision_DOWN && !h->collision_RIGHT)
 				{
 					h->position.x += 4 + accel;
+					if (accel > 0)
+						accel -= 0.1;
 				}
 				else if (h->collision_DOWN && !h->collision_RIGHT)
 				{
 
 					h->position.x += 4 + accel;
 					animer_hero(h, WALK_RIGHT, c);
-
-					//animer_hero(h, WALK_RIGHT,c);
-					/*if (accel < 5)
-					accel += 0.1;*/
+					if (accel < 5)
+						accel += 0.1;
 				}
 			}
 			if (keystates[SDLK_LEFT] || (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT) && (event.motion.x < h->position.x)))
 			{
+				if (h->direction == RIGHT && accel >= 1)
+					accel = -2.5;
 				h->direction = LEFT;
-				CollisionParfaite(h, *b, p);
+				CollisionParfaite(h, *b);
+				collision_platforme(h, plats, n);
 				if (!h->collision_DOWN && !h->collision_LEFT)
 				{
 
 					h->position.x -= 4 + accel;
-					/*if (accel < 5)
-					accel += 0.1;*/
+					if (accel > 0)
+						accel -= 0.1;
 					if (h->position.x < 0)
 						h->position.x = 0;
 				}
@@ -309,9 +325,8 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 				{
 					h->position.x -= 4 + accel;
 					animer_hero(h, WALK_LEFT, c);
-					//animer_hero(h, WALK_LEFT,c);
-					/*if (accel < 5)
-					accel += 0.1;*/
+					if (accel < 5)
+						accel += 0.1;
 					if (h->position.x < 0)
 						h->position.x = 0;
 				}
@@ -365,6 +380,32 @@ void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platfor
 					case SDLK_c:
 						Mix_PlayChannel(-1, punch_sound, 0);
 						animer_hero(h, KICK, c);
+						break;
+					case SDLK_k:
+						h->vie_hero.nb_vie = 0;
+						break;
+					case SDLK_s:
+						*saving = 1;
+						break;
+					case SDLK_q:
+						*saving = 0;
+						break;
+					case SDLK_y:
+						if (*saving == 1)
+							*saving = 2;
+						break;
+
+					case SDLK_f:
+						h->position.x -= 100;
+						break;
+					case SDLK_h:
+						h->position.x += 100;
+						break;
+					case SDLK_t:
+						h->position.y -= 200;
+						break;
+					case SDLK_g:
+						h->position.y += 200;
 						break;
 					}
 					break;
@@ -431,7 +472,6 @@ void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c)
 	d->pos_hero_dialogue.y = SCREEN_HEIGHT - d->hero_dialogue->h;
 }
 
-
 void linear_dialogue(dialogue *d, SDL_Surface *ecran)
 {
 	static int tempsActuel = 0;
@@ -464,16 +504,16 @@ void linear_dialogue(dialogue *d, SDL_Surface *ecran)
 	}
 }
 
-void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran, heure temps)
+void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran, timer timer)
 {
 
 	static int reached = 0;
-	int passage;
+	static int passage;
 	static int once = 0;
 
 	passage = reached;
 
-	if (h.position.x >= 600 && h.position.x < 1680 && once != 1)
+	if (h.position.x >= 800 && h.position.x < 1950 && once != 1)
 	{
 
 		once = 1;
@@ -486,6 +526,12 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran, heure temps)
 		if (reached != 2)
 			reached++;
 	}
+	/*else if (h.position.x >= 2450 && h.position.x < 2650 && once != 3)
+	{
+		once = 3;
+		if (reached <4)
+			reached++;
+	}*/
 	switch (reached)
 	{
 	case 1:
@@ -496,6 +542,11 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran, heure temps)
 			d->line++;
 		linear_dialogue(d, ecran);
 		break;
+	/*case 3:
+		if (reached > passage)
+			d->line++;
+		linear_dialogue(d, ecran);
+		break;*/
 	}
 
 	printf("LINE: %d\n", d->line);
@@ -508,21 +559,22 @@ void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran, heure temps)
 		d->hero_dialogue = NULL;
 	}
 
-	if (temps.secondes>=20 && temps.secondes<25)
+	if (timer.time.secondes >= 20 && timer.time.secondes < 25)
 	{
-		d->text.text = TTF_RenderText_Blended(d->text.font, d->script[10], d->text.color);
+		printf("HERE\n");
+		d->text.text = TTF_RenderText_Blended(d->text.font, d->script[15], d->text.color);
 		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
 		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
 		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
 	}
-	if (h.position.x>=1690 && h.position.x<=1990 && h.position.y>=1560)
+	/*if (h.position.x >= 1690 && h.position.x <= 1990 && h.position.y >= 1560)
 	{
 
 		d->text.text = TTF_RenderText_Blended(d->text.font, d->script[11], d->text.color);
 		d->hero_dialogue = IMG_Load("../img/hero/safwen_choice_active.png");
 		d->dialogue_box = SDL_CreateRGBSurface(SDL_HWSURFACE, SCREEN_WIDTH, 180, 32, 0, 0, 0, 0);
 		SDL_FillRect(d->dialogue_box, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
-	}
+	}*/
 }
 
 void afficher_dialogue(dialogue d, SDL_Surface *ecran)
@@ -530,4 +582,11 @@ void afficher_dialogue(dialogue d, SDL_Surface *ecran)
 	SDL_BlitSurface(d.dialogue_box, NULL, ecran, &d.pos_dialogue_box);
 	SDL_BlitSurface(d.hero_dialogue, NULL, ecran, &d.pos_hero_dialogue);
 	SDL_BlitSurface(d.text.text, NULL, ecran, &d.text.position);
+}
+void free_dialogue(dialogue *d)
+{
+	SDL_FreeSurface(d->dialogue_box);
+	SDL_FreeSurface(d->hero_dialogue);
+	SDL_FreeSurface(d->text.text);
+	TTF_CloseFont(d->text.font);
 }

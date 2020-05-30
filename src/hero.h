@@ -60,7 +60,7 @@ typedef struct Hero
     SDL_Rect position;
     sprite sprite;
     state state;
-    int collision_UP, collision_DOWN, collision_RIGHT, collision_LEFT;
+    int collision_UP, collision_DOWN, collision_RIGHT, collision_LEFT,collision_DOWN_PLAT;
     int current_ground_position;
     direction direction;
     vie vie_hero;
@@ -72,22 +72,23 @@ typedef struct Dialogue
 {
     text text;
     char script[20][40];
-    SDL_Surface *dialogue_box,*hero_dialogue;
-    SDL_Rect pos_dialogue_box,pos_hero_dialogue;
+    SDL_Surface *dialogue_box, *hero_dialogue;
+    SDL_Rect pos_dialogue_box, pos_hero_dialogue;
     int line;
     int talking;
     int first_time;
-}dialogue;
+} dialogue;
 
 void initialiser_hero(hero *h, char name[20]);
-void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c,platforme p);
-void animer_hero(hero *h, state movement,character c);
-void afficher_hero(hero h, SDL_Surface *screen,background b);
+void deplacer_hero(hero *h, background *b, int *Jcontinuer, character c, platforme plats[], int *saving,int n);
+void animer_hero(hero *h, state movement, character c);
+void afficher_hero(hero h, SDL_Surface *screen, background b);
 void free_hero(hero *h);
 
-void initialiser_dialogue(dialogue *d, SDL_Surface *ecran,character c);
+void initialiser_dialogue(dialogue *d, SDL_Surface *ecran, character c);
 void dialogue_choice(dialogue *d, SDL_Surface *ecran, int first_line);
-void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran,heure heure);
+void playing_dialogue(dialogue *d, hero h, SDL_Surface *ecran, timer timer);
 void afficher_dialogue(dialogue d, SDL_Surface *ecran);
 void linear_dialogue(dialogue *d, SDL_Surface *ecran);
+void free_dialogue(dialogue *d);
 #endif

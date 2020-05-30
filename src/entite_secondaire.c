@@ -13,7 +13,7 @@ void initialiser_entite(entite *E)
 	E->type = ENTITE;
 	E->state_entite = WALK_entite;
 	E->position.x = 2100;
-	E->position.y = 1265;
+	E->position.y = 1570;
 	E->direction_entite = 1;
 	E->type = 0;
 	E->sprite_entite.curframe = 0; //unused
@@ -38,8 +38,8 @@ void animer_entite(entite *E)
 				E->sprite_entite.image = IMG_Load("../img/es/Die.png");
 				E->sprite_entite.maxframe = 4;
 				dead = 1;
-				walking=0;
-				following=0;
+				walking = 0;
+				following = 0;
 			}
 
 			break;
@@ -51,8 +51,8 @@ void animer_entite(entite *E)
 				E->sprite_entite.image = IMG_Load("../img/es/walk.png");
 				E->sprite_entite.maxframe = 5;
 				walking = 1;
-				dead=0;
-				following=0;
+				dead = 0;
+				following = 0;
 			}
 
 			break;
@@ -63,9 +63,9 @@ void animer_entite(entite *E)
 			{
 				E->sprite_entite.image = IMG_Load("../img/es/attack.png");
 				E->sprite_entite.maxframe = 3;
-				following=1;
-				dead=0;
-				walking=0;
+				following = 1;
+				dead = 0;
+				walking = 0;
 			}
 
 			break;
@@ -171,11 +171,6 @@ void free_entite(entite *E)
 	SDL_FreeSurface(E->sprite_entite.image);
 }
 
-void free_pu(power_up *p)
-{
-	SDL_FreeSurface(p->sprite.image);
-}
-
 void initialiser_coins(power_up coins[], int n)
 {
 	int i;
@@ -195,10 +190,17 @@ void initialiser_coins(power_up coins[], int n)
 		coins[i].sprite.frame.h = coins[i].sprite.image->h / 3;
 	}
 
-	coins[0].position.x = 1065;
-	coins[0].position.y = 1460;
-	coins[1].position.x = 1696;
-	coins[1].position.y = 1400;
+	coins[0].position.x = 1445;
+	coins[0].position.y = 1305;
+	coins[1].position.x = 1815;
+	coins[1].position.y = 1475;
+	coins[2].position.x = 2268;
+	coins[2].position.y = 900;
+	coins[3].position.x = 2900;
+	coins[3].position.y = 1065;
+	coins[4].position.x = 320;
+	coins[4].position.y = 700;
+
 }
 
 void coins_interaction(power_up coins[], int n, hero *h)
@@ -241,7 +243,7 @@ void animer_coins(power_up coins[], int n)
 
 void afficher_coins(power_up coins[], int n, background b, SDL_Surface *ecran)
 {
-	SDL_Rect pos;
+	static SDL_Rect pos;
 	int i;
 	for (i = 0; i < n; i++)
 	{
@@ -252,20 +254,27 @@ void afficher_coins(power_up coins[], int n, background b, SDL_Surface *ecran)
 	}
 }
 
+void init_heart(heart *h, int x, int y)
+{
+	
+	h->image = IMG_Load("../img/hero/heart1.png");
+	h->click = Mix_LoadWAV("../sfx/coin_pick.wav");
+	h->position.x = x;
+	h->position.y = y;
+	h->pos_init.x = x;
+	h->pos_init.y = y;
+}
+
 void initialiser_hearts(heart hearts[], int n)
 {
-	int i;
+
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
 	{
 		printf("%s", Mix_GetError());
 	}
-	for (i = 0; i < n; i++)
-	{
-		hearts[i].click = Mix_LoadWAV("../sfx/coin_pick.wav");
-		hearts[i].image = IMG_Load("../img/hero/heart1.png");
-	}
-	hearts[0].position.x = 1396;
-	hearts[0].position.y = 1330;
+
+	init_heart(&hearts[0],2870,1455);
+
 }
 
 void animer_hearts(heart hearts[], int n)
@@ -273,7 +282,7 @@ void animer_hearts(heart hearts[], int n)
 	static int tempsActuel = 0;
 	static int tempsPrecedent = 0;
 	static int sens = 1;
-	int i;
+	static int i;
 
 	tempsActuel = SDL_GetTicks();
 	if (tempsActuel - tempsPrecedent > 30)
@@ -285,14 +294,15 @@ void animer_hearts(heart hearts[], int n)
 		}
 	}
 
-	if (hearts[0].position.y >= 1330)
+	if (hearts[0].position.y >= hearts[0].pos_init.y)
 		sens = -1;
-	if (hearts[0].position.y <= 1310)
+	if (hearts[0].position.y <= hearts[0].pos_init.y-20)
 		sens = 1;
 }
+
 void hearts_interaction(heart hearts[], int n, hero *h)
 {
-	int i;
+	static int i;
 	for (i = 0; i < n; i++)
 	{
 		if (hearts[i].image != NULL && h->position.x >= hearts[i].position.x && h->position.x <= hearts[i].position.x + hearts[i].image->w && h->position.y >= hearts[i].position.y && h->position.y <= hearts[i].position.y + hearts[i].image->h)
@@ -306,7 +316,7 @@ void hearts_interaction(heart hearts[], int n, hero *h)
 void afficher_hearts(heart hearts[], int n, background b, SDL_Surface *ecran)
 {
 
-	SDL_Rect pos;
+	static SDL_Rect pos;
 	int i;
 	for (i = 0; i < n; i++)
 	{
@@ -314,5 +324,24 @@ void afficher_hearts(heart hearts[], int n, background b, SDL_Surface *ecran)
 		pos.y = hearts[i].position.y - b.posCamera.y;
 
 		SDL_BlitSurface(hearts[i].image, NULL, ecran, &pos);
+	}
+}
+
+void free_pu(power_up p[], int n)
+{
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		SDL_FreeSurface(p[i].sprite.image);
+	}
+}
+
+void free_hearts(heart hearts[], int n)
+{
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		SDL_FreeSurface(hearts[i].image);
+		Mix_FreeChunk(hearts[i].click);
 	}
 }

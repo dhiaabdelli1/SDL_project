@@ -11,8 +11,9 @@ SDL_Color GetPixel(SDL_Surface *pSurface, int x, int y)
 	SDL_GetRGB(col, pSurface->format, &color.r, &color.g, &color.b);
 	return (color);
 }
-void CollisionParfaite(hero *h, background b, platforme p)
+void CollisionParfaite(hero *h, background b)
 {
+	static int index_plat;
 	SDL_Color couleur_obstacle = {255, 255, 255};
 	int i = 0;
 	int collision = 0;
@@ -22,6 +23,7 @@ void CollisionParfaite(hero *h, background b, platforme p)
 	h->collision_DOWN = -1;
 	h->collision_RIGHT = -1;
 	h->collision_LEFT = -1;
+	h->collision_DOWN_PLAT=0;
 
 	pos[0].x = h->position.x;
 	pos[0].y = h->position.y;
@@ -102,14 +104,25 @@ void CollisionParfaite(hero *h, background b, platforme p)
 	else
 		h->collision_DOWN = 1;
 
-	if (!(h->position.y > p.position.y + p.image->h || h->position.y + h->sprite.frame.h < p.position.y || h->position.x > p.position.x + p.image->w || h->position.x <= p.position.x))
-		h->collision_DOWN = 1;
-	if (!(abs(h->position.y - p.position.y - p.image->h) > 5 || h->position.x > p.position.x + p.image->w || h->position.x <= p.position.x))
-		h->collision_UP = 1;
 	if (abs(h->position.y - b.posCamera.y) < 7)
 		h->collision_UP = 1;
 	if (abs(h->position.y + h->sprite.image->h - b.image->h - b.posCamera.h) < 170)
 		h->collision_DOWN = 1;
+}
+void collision_platforme(hero *h, platforme plats[], int n)
+{
+	static int i;
+	for (i = 0; i < n; i++)
+	{
+		if (!(h->position.y > plats[i].position.y + plats[i].image->h || h->position.y + h->sprite.frame.h < plats[i].position.y || h->position.x > plats[i].position.x + plats[i].image->w || h->position.x <= plats[i].position.x))
+			{
+				h->collision_DOWN = 1;
+				h->collision_DOWN_PLAT=1;
+			}
+			
+		if (!(abs(h->position.y - plats[i].position.y - plats[i].image->h) > 5 || h->position.x > plats[i].position.x + plats[i].image->w || h->position.x <= plats[i].position.x))
+			h->collision_UP = 1;
+	}
 }
 
 int collision(entite *e, hero *h)

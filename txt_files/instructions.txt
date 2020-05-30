@@ -1,4 +1,6 @@
 Press the arrow keys to move around
 Press x to punch and c to kick
-Jump to get more coins!
-Just kidding lol!
+coins increase your score
+hearts increase your health
+use the moving platforms
+

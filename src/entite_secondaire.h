@@ -51,6 +51,7 @@ typedef struct Power_up
     sprite sprite;
     SDL_Rect position;
     Mix_Chunk *click;
+    SDL_Rect pos_init;
 }power_up;
 
 typedef struct Heart
@@ -58,6 +59,7 @@ typedef struct Heart
     SDL_Surface *image;
     SDL_Rect position;
     Mix_Chunk *click;
+    SDL_Rect pos_init;
 }heart;
 void input_ennemi(entite *E, hero *h);
 void update_entite(entite *E ,hero *h);
@@ -69,13 +71,15 @@ void afficher_entite(entite *E, SDL_Surface *screen,background b);
 void free_entite(entite *E);
 
 
-void free_pu(power_up *p);
+void free_pu(power_up p[],int n);
+void free_hearts(heart hearts[], int n);
 
 void initialiser_coins(power_up coins[], int n);
 void coins_interaction(power_up coins[], int n, hero *h);
 void animer_coins(power_up coins[], int n);
 void afficher_coins(power_up coins[], int n, background b, SDL_Surface *ecran);
 
+void init_heart(heart *h, int x, int y);
 void initialiser_hearts(heart hearts[], int n);
 void animer_hearts(heart hearts[], int n);
 void hearts_interaction(heart hearts[],int n,hero *h);

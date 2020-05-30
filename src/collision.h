@@ -6,7 +6,8 @@
 #include "background.h"
 
 SDL_Color GetPixel(SDL_Surface *pSurface, int x, int y);
-void CollisionParfaite(hero *h,background b,platforme p);
+void CollisionParfaite(hero *h, background b);
+void collision_platforme(hero *h, platforme plats[], int n);
 //int Colision_bb(hero *h, entite *e);
 int collision(entite *E, hero *h);
 #endif

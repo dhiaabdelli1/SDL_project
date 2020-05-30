@@ -351,10 +351,10 @@ void game_over(SDL_Surface *screen, etat *etat, parameter *p)
 	SDL_FreeSurface(game_over_bg);
 	SDL_FreeSurface(restart.text);
 	SDL_FreeSurface(main_menu.text);
-	SDL_Quit();
+	//SDL_Quit();
 }
 
-void game_load(hero *h, background *b, etat *etat, SDL_Surface *screen, parameter *p, character *c)
+void game_load(hero *h, background *b, etat *etat, SDL_Surface *screen, parameter *p, character *c, dialogue *d)
 {
 	SDL_Event event;
 	int continuer = 1;
@@ -434,7 +434,7 @@ void game_load(hero *h, background *b, etat *etat, SDL_Surface *screen, paramete
 					switch (rang)
 					{
 					case 0:
-						load_game(h, b, c);
+						load_game(h, b, c, d);
 						*etat = GAME;
 						continuer = 0;
 						break;
@@ -474,7 +474,7 @@ void game_load(hero *h, background *b, etat *etat, SDL_Surface *screen, paramete
 				{
 					if (event.motion.x > pos_continue.x && event.motion.x < pos_continue.x + cont->w && event.motion.y > pos_continue.y && event.motion.y < pos_continue.y + cont->h)
 					{
-						load_game(h, b, c);
+						load_game(h, b, c, d);
 						*etat = GAME;
 						continuer = 0;
 					}
@@ -500,7 +500,7 @@ void game_load(hero *h, background *b, etat *etat, SDL_Surface *screen, paramete
 	}
 }
 
-void save_game(hero h, background b, character c)
+void save_game(hero h, background b, character c, dialogue d)
 {
 	FILE *f = NULL;
 	f = fopen("../txt_files/niveau.txt", "w");
@@ -510,9 +510,9 @@ void save_game(hero h, background b, character c)
 		exit(EXIT_FAILURE);
 	}
 	if (c == SAFWEN)
-		fprintf(f, "%d %d %d %d %d\n", h.vie_hero.nb_vie, h.score_hero.valeur_score, h.position.x, h.position.y, 0);
+		fprintf(f, "%d %d %d %d %d %d\n", h.vie_hero.nb_vie, h.score_hero.valeur_score, h.position.x, h.position.y, d.line, 0);
 	else if (c == OMAR)
-		fprintf(f, "%d %d %d %d %d\n", h.vie_hero.nb_vie, h.score_hero.valeur_score, h.position.x, h.position.y, 1);
+		fprintf(f, "%d %d %d %d %d %d\n", h.vie_hero.nb_vie, h.score_hero.valeur_score, h.position.x, h.position.y, d.line, 1);
 	if (ferror(f))
 	{
 		fprintf(stderr, "Failed to print to file\n");
@@ -520,7 +520,7 @@ void save_game(hero h, background b, character c)
 	}
 	fclose(f);
 }
-void load_game(hero *h, background *b, character *c)
+void load_game(hero *h, background *b, character *c, dialogue *d)
 {
 	int i;
 	FILE *f = NULL;
@@ -534,7 +534,7 @@ void load_game(hero *h, background *b, character *c)
 
 	initialiser_background(b);
 
-	fscanf(f, "%d %d %hd %hd %d", &h->vie_hero.nb_vie, &h->score_hero.valeur_score, &h->position.x, &h->position.y, &i);
+	fscanf(f, "%d %d %hd %hd %d %d", &h->vie_hero.nb_vie, &h->score_hero.valeur_score, &h->position.x, &h->position.y, &d->line, &i);
 	if (i == 0)
 		*c = SAFWEN;
 	else if (i == 1)
