@@ -4,7 +4,7 @@ void initialiser_background(background *b)
 {
 	b->image = IMG_Load("../img/background/background_new.jpg");
 	b->background_mask = IMG_Load("../img/background/background_new_masque.jpg");
-	b->foreground = IMG_Load("../img/background/foreground.png");
+	b->foreground = IMG_Load("../img/background/foreground_2.png");
 
 	b->posCamera.x = 400;
 	b->posCamera.y = 900;
@@ -88,9 +88,10 @@ void initialiser_instructions(text instructions[], int n)
 
 	initialiser_text(&instructions[0], script[0], 600, 1500, 30);
 	initialiser_text(&instructions[1], script[1], 2000, 1500, 30);
-	initialiser_text(&instructions[2], script[2], 1310, 1250, 30);
+	initialiser_text(&instructions[2], script[2], 1310, 1265, 30);
 	initialiser_text(&instructions[3], script[3], 2700, 1355, 30);
 	initialiser_text(&instructions[4], script[4], 3720, 1100, 30);
+	initialiser_text(&instructions[5], script[5], 1495, 850, 30);
 }
 
 void afficher_background(background *b, SDL_Surface *screen)
@@ -98,7 +99,6 @@ void afficher_background(background *b, SDL_Surface *screen)
 
 	SDL_BlitSurface(b->background_mask, &b->position_background_mask, screen, NULL);
 	SDL_BlitSurface(b->image, &b->posCamera, screen, NULL);
-
 }
 void afficher_platformes(platforme plats[], background b, SDL_Surface *ecran, int n)
 {
@@ -222,9 +222,23 @@ void resume_timer(timer *t)
 	}
 }
 
-void show_time(timer *t)
+void show_time(timer *t, SDL_Surface *screen)
 {
+	static text time;
+	static char cont[20];
+	static int once = 0;
+
+	if (!once)
+	{
+		initialiser_text(&time, "", (SCREEN_WIDTH / 2) - 85, 0, 30);
+		once = 1;
+	}
+
 	get_time(t);
+	sprintf(cont, "%02d:%02d:%02d\n", t->time.heures, t->time.minutes, t->time.secondes);
+	time.text = TTF_RenderText_Blended(time.font, cont, time.color);
+	SDL_BlitSurface(time.text, NULL, screen, &time.position);
+
 	printf("%02d:%02d:%02d\n", t->time.heures, t->time.minutes, t->time.secondes);
 }
 

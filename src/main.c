@@ -17,6 +17,7 @@ void main(int argc, char *argv[])
         load_intro(tab);
     }
 
+
     int continuer = 1;
 
     SDL_Surface *screen;
@@ -34,7 +35,6 @@ void main(int argc, char *argv[])
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
-    
 
     screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 
@@ -43,7 +43,7 @@ void main(int argc, char *argv[])
         switch (etat)
         {
         case INTRO:
-            play_intro(tab, screen, &etat);
+            play_intro(tab, screen, &etat,&parameter);
             break;
         case MENU:
             menu(screen, &etat, &parameter);
@@ -55,7 +55,7 @@ void main(int argc, char *argv[])
             settings(screen, &parameter, &etat);
             break;
         case GAME_OVER:
-            game_over(screen, &etat, &parameter);
+            game_over(screen, &etat, &parameter,&safwen);
             break;
         case CHARACTER:
             character_choice(&safwen, &etat, screen, &parameter, &c);
@@ -65,6 +65,9 @@ void main(int argc, char *argv[])
             break;
         case CHEAT:
             cheat(screen,&etat,parameter);
+            break;
+        case CREDS:
+            play_credits(screen,&etat,parameter);
             break;
         case EXIT:
             continuer = 0;

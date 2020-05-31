@@ -13,18 +13,19 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	int Jcontinuer = 1;
 	int verif = 0;
 
-	entite enemie;
 	//enigme enigme_m;
 	int nb_platformes = 5;
 	int nb_coins = 5;
 	int nb_hearts = 1;
-	int nb_instructions = 5;
+	int nb_instructions = 6;
+	int nb_ennemies = 2;
 
 	int tempsActuel = 0;
 	int tempsPrecedent = 0;
 
 	SDL_Rect pos_rel;
 
+	entite ennemies[nb_ennemies];
 	platforme platformes[nb_platformes];
 	text game_over_txt;
 	dialogue dialogue = dial;
@@ -32,8 +33,6 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	power_up coins[nb_coins];
 	heart hearts[nb_hearts];
 	timer timer;
-	heure heure;
-	text temps;
 
 	int plat_coll;
 
@@ -46,8 +45,8 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	init_timer(&timer);
 	initialiser_dialogue(&dialogue, ecran, c);
 	initialiser_background(&background);
-	initialiser_entite(&enemie);
-	//initenigme(&enigme_m);
+	initialiser_ennemies(ennemies, nb_ennemies);
+
 	initialiser_plats(platformes, nb_platformes);
 
 	initialiser_instructions(instructions, nb_instructions);
@@ -55,7 +54,6 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	initialiser_hearts(hearts, nb_hearts);
 
 	initialiser_text(&game_over_txt, "", SCREEN_WIDTH / 2 - 250, SCREEN_HEIGHT / 2, 90);
-	initialiser_text(&temps, "", (SCREEN_WIDTH / 2) - 85, 0, 30);
 
 	p->music = Mix_LoadMUS("../sfx/alter-ego.mp3");
 	if (!p->mute)
@@ -109,7 +107,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			safwen->position.x += 1200;
 			safwen->position.y += 600;
 		}
-
+		//save
 		if (saving == 0)
 		{
 
@@ -138,10 +136,6 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			}
 		}
 
-		printf("SAVING: %d\n", saving);
-
-		printf("STATE: %d\n", safwen->state);
-
 		if (safwen->state == IDLE)
 		{
 			resume_timer(&timer);
@@ -151,22 +145,21 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			pause_timer(&timer);
 			start_timer(&timer);
 		}
-		if (heure.secondes >= 20)
-			printf("Hello!?");
 
-		show_time(&timer);
-
-		if (abs(safwen->position.x - enemie.position.x) <= 250 && abs(safwen->position.y - enemie.position.y) >= 0 && abs(safwen->position.y - enemie.position.y) <= 50)
-			attack_entite(&enemie, safwen);
-		else
-			deplacer_alea(&enemie);
+		for (i = 0; i < nb_ennemies; i++)
+		{
+			if (abs(safwen->position.x - ennemies[i].position.x) <= 250 && abs(safwen->position.y - ennemies[i].position.y) >= 0 && abs(safwen->position.y - ennemies[i].position.y) <= 50)
+				attack_entite(&ennemies[i], safwen);
+			else
+				deplacer_alea(&ennemies[i]);
+		}
 
 		coins_interaction(coins, nb_coins, safwen);
 		hearts_interaction(hearts, nb_hearts, safwen);
 
 		playing_dialogue(&dialogue, *safwen, ecran, timer);
 
-		animer_entite(&enemie);
+		animer_ennemies(ennemies, nb_ennemies);
 		animer_hero(safwen, safwen->state, c);
 		animer_coins(coins, nb_coins);
 		animer_hearts(hearts, nb_hearts);
@@ -177,7 +170,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 
 		afficher_coins(coins, nb_coins, background, ecran);
 		afficher_hearts(hearts, nb_hearts, background, ecran);
-		afficher_entite(&enemie, ecran, background);
+		afficher_ennemies(ennemies, nb_ennemies, ecran, background);
 
 		afficher_instructions(instructions, nb_instructions, background, ecran);
 
@@ -203,11 +196,11 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 		}
 		afficher_hero(*safwen, ecran, background);
 
-		pos_rel.x = background.pos_foreground.x - background.posCamera.x-400;
-		pos_rel.y = background.pos_foreground.x - background.posCamera.y-400;
-		SDL_BlitSurface(background.foreground, NULL, ecran,&pos_rel);
+		pos_rel.x = background.pos_foreground.x - background.posCamera.x - 400;
+		pos_rel.y = background.pos_foreground.x - background.posCamera.y - 400;
+		SDL_BlitSurface(background.foreground, NULL, ecran, &pos_rel);
 		afficher_dialogue(dialogue, ecran);
-		afficher_temps(&temps, &timer, ecran);
+		show_time(&timer, ecran);
 		SDL_BlitSurface(black, NULL, ecran, &position_black);
 		SDL_BlitSurface(save_screen, NULL, ecran, &pos_save_screen);
 		SDL_BlitSurface(save_text.text, NULL, ecran, &save_text.position);
@@ -218,7 +211,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	}
 	free_hero(safwen);
 	free_background(&background);
-	free_entite(&enemie);
+	free_ennemies(ennemies, nb_ennemies);
 	free_pu(coins, nb_coins);
 	free_hearts(hearts, nb_hearts);
 	free_instructions(instructions, nb_instructions);

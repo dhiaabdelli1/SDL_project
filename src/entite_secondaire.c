@@ -2,7 +2,7 @@
 #include "collision.h"
 #include "background.h"
 
-void initialiser_entite(entite *E)
+void initialiser_entite(entite *E, int x, int y)
 {
 	E->sprite_entite.image = IMG_Load("../img/es/walk.png");
 	E->sprite_entite.maxframe = 5;
@@ -12,14 +12,63 @@ void initialiser_entite(entite *E)
 	E->sprite_entite.frame.h = E->sprite_entite.image->h / 2; //2=Nb de ligne(g/d)
 	E->type = ENTITE;
 	E->state_entite = WALK_entite;
-	E->position.x = 2100;
-	E->position.y = 1570;
+	E->position.x = x; // 2100;
+	E->position.y = y; //1570;
 	E->direction_entite = 1;
 	E->type = 0;
 	E->sprite_entite.curframe = 0; //unused
 	srand(time(NULL));
 	E->posMin.x = rand() % 200 + 100 + E->position.x; //+ position Hero
 	E->posMax.x = rand() % 100 + E->posMin.x;
+}
+void initialiser_ennemies(entite tab[], int n)
+{
+	initialiser_entite(&tab[0],2100,1570);
+	initialiser_entite(&tab[1],1242,1055);
+}
+
+//this fonction needs tweaking. Apply same idea as animer_coins/animer_hearts
+void animer_ennemies(entite tab[], int n)
+{
+	static int i;
+	for (i = 0; i < n; i++)
+	{
+		animer_entite(&tab[i]);
+	}
+}
+
+void deplacer_alea_ennemies(entite tab[], int n)
+{
+	static int i;
+	for (i = 0; i < n; i++)
+	{
+		deplacer_alea(&tab[i]);
+	}
+}
+void attack_ennemies(entite tab[], int n, hero *h)
+{
+	static int i;
+	for (i = 0; i < n; i++)
+	{
+		attack_entite(&tab[i], h);
+	}
+}
+void free_ennemies(entite tab[], int n)
+{
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		free_entite(&tab[i]);
+	}
+}
+
+void afficher_ennemies(entite tab[], int n, SDL_Surface *screen, background b)
+{
+	static int i;
+	for (i = 0; i < n; i++)
+	{
+		afficher_entite(&tab[i], screen, b);
+	}
 }
 void animer_entite(entite *E)
 {
@@ -200,7 +249,6 @@ void initialiser_coins(power_up coins[], int n)
 	coins[3].position.y = 1065;
 	coins[4].position.x = 320;
 	coins[4].position.y = 700;
-
 }
 
 void coins_interaction(power_up coins[], int n, hero *h)
@@ -256,7 +304,7 @@ void afficher_coins(power_up coins[], int n, background b, SDL_Surface *ecran)
 
 void init_heart(heart *h, int x, int y)
 {
-	
+
 	h->image = IMG_Load("../img/hero/heart1.png");
 	h->click = Mix_LoadWAV("../sfx/coin_pick.wav");
 	h->position.x = x;
@@ -273,8 +321,7 @@ void initialiser_hearts(heart hearts[], int n)
 		printf("%s", Mix_GetError());
 	}
 
-	init_heart(&hearts[0],2870,1455);
-
+	init_heart(&hearts[0], 2870, 1455);
 }
 
 void animer_hearts(heart hearts[], int n)
@@ -296,7 +343,7 @@ void animer_hearts(heart hearts[], int n)
 
 	if (hearts[0].position.y >= hearts[0].pos_init.y)
 		sens = -1;
-	if (hearts[0].position.y <= hearts[0].pos_init.y-20)
+	if (hearts[0].position.y <= hearts[0].pos_init.y - 20)
 		sens = 1;
 }
 

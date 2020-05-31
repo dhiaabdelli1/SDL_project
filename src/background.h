@@ -83,7 +83,7 @@ void stop_timer(timer *t);
 void get_time(timer *t);
 void pause_timer(timer *t);
 void resume_timer(timer *t);
-void show_time(timer *t);
+void show_time(timer *t, SDL_Surface *screen);
 void afficher_temps(text *t, timer *timer, SDL_Surface *ecran);
 
 void free_param(parameter *p);

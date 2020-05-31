@@ -38,7 +38,10 @@ void settings(SDL_Surface *screen, parameter *p, etat *etat);
 void character_choice(hero *h, etat *etat, SDL_Surface *screen, parameter *p, character *c);
 void save_game(hero h, background b, character c,dialogue d);
 void load_game(hero *h, background *b, character *c,dialogue *d);
-void game_over(SDL_Surface *screen, etat *etat, parameter *p);
+void game_over(SDL_Surface *screen, etat *etat, parameter *p, hero *h);
 void load_intro(SDL_Surface *tab[]);
-void play_intro(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat);
+void play_intro(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat,parameter *p);
 void cheat(SDL_Surface *ecran, etat *etat,parameter p);
+
+
+void play_credits(SDL_Surface *screen, etat *etat, parameter p);

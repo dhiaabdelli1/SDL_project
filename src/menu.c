@@ -3,6 +3,92 @@
 
 #define SIZE 100
 
+void play_credits(SDL_Surface *screen, etat *etat, parameter p)
+{
+	SDL_Surface *background = IMG_Load("../img/black.jpg");
+
+	SDL_Rect position_back;
+	position_back.x = 0;
+	position_back.y = 0;
+
+	SDL_Event event;
+
+	int continuer = 1;
+	int i = 0;
+	int nb_lines = 32;
+	int distance = 500;
+
+	text cred[nb_lines];
+
+	char credits_script[nb_lines][40];
+
+	if (!p.mute)
+		Mix_ResumeMusic();
+	else
+		Mix_PauseMusic();
+	if (p.fullscreen)
+		screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
+
+	FILE *f;
+	f = fopen("../txt_files/credits.txt", "r");
+	if (f == NULL)
+		exit(EXIT_FAILURE);
+	while (!feof(f))
+	{
+		fgets(credits_script[i], 30, f);
+		i++;
+	}
+	fclose(f);
+
+	for (i = 0; i < nb_lines; i++)
+	{
+		initialiser_text(&cred[i], credits_script[i], 100, distance, 30);
+		distance += 30;
+	}
+
+	//centering
+	for (i = 0; i < nb_lines; i++)
+	{
+		cred[i].position.x = (SCREEN_WIDTH / 2) - (cred[i].text->w) / 2;
+	}
+
+	while (continuer)
+	{
+		while (SDL_PollEvent(&event))
+		{
+			switch (event.type)
+			{
+			case SDL_KEYDOWN:
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_ESCAPE:
+					*etat = MENU;
+					continuer = 0;
+				}
+				break;
+			}
+		}
+		SDL_BlitSurface(background, NULL, screen, &position_back);
+		for (i = 0; i < nb_lines; i++)
+		{
+			SDL_BlitSurface(cred[i].text, NULL, screen, &cred[i].position);
+		}
+		SDL_Flip(screen);
+		for (i = 0; i < nb_lines; i++)
+		{
+			cred[i].position.y -= 1;
+			if (cred[i].position.y < 0)
+
+				cred[i].text = TTF_RenderText_Blended(cred[i].font, "", cred[i].color);
+		}
+	}
+	for (i = 0; i < nb_lines; i++)
+	{
+		SDL_FreeSurface(cred[i].text);
+		TTF_CloseFont(cred[i].font);
+	}
+	SDL_FreeSurface(background);
+}
 unsigned long
 hash(const char *str)
 {
@@ -227,7 +313,6 @@ void cheat(SDL_Surface *ecran, etat *etat, parameter p)
 	SDL_FreeSurface(back);
 	SDL_FreeSurface(text_field);
 	SDL_FreeSurface(background);
-	//SDL_Quit();
 }
 
 void load_intro(SDL_Surface *tab[])
@@ -236,15 +321,22 @@ void load_intro(SDL_Surface *tab[])
 	char image[50];
 	for (i = 0; i < 101; i++)
 	{
-		sprintf(image, "../img/intro/(%d).jpg", i + 1);
+		sprintf(image, "../cinematics/intro/  (%d).jpg", i + 1);
 		tab[i] = IMG_Load(image);
 	}
 }
-void play_intro(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat)
+void play_intro(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat, parameter *p)
 {
 	static int i = 0;
 	static int tempsActuel = 0;
 	static int tempsPrecedent = 0;
+	static int once = 0;
+
+	if (once = 0)
+	{
+		//p->music = ;
+		//once = 1;
+	}
 	SDL_Rect pos;
 	pos.x = 0;
 	pos.y = 0;
@@ -262,7 +354,7 @@ void play_intro(SDL_Surface *tab[], SDL_Surface *ecran, etat *etat)
 	else
 		*etat = INTRO;
 }
-void game_over(SDL_Surface *screen, etat *etat, parameter *p)
+void game_over(SDL_Surface *screen, etat *etat, parameter *p, hero *h)
 {
 	SDL_Event event;
 	TTF_Init();
@@ -331,6 +423,7 @@ void game_over(SDL_Surface *screen, etat *etat, parameter *p)
 					if (rang == 0)
 					{
 						*etat = GAME;
+						initialiser_hero(h, "safwen");
 						continuer = 0;
 					}
 					else if (rang == 1)
@@ -1365,6 +1458,12 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 						*etat = SETTING;
 						continuer = 0;
 						//settings(screen, p);
+					}
+					if (rang == 3)
+					{
+						Mix_PlayChannel(-1, p->click, 0);
+						*etat = CREDS;
+						continuer = 0;
 					}
 					if (rang == 4)
 					{

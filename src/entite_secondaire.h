@@ -64,7 +64,7 @@ typedef struct Heart
 void input_ennemi(entite *E, hero *h);
 void update_entite(entite *E ,hero *h);
 void attack_entite(entite *E,hero *h);
-void initialiser_entite(entite *E);
+void initialiser_entite(entite *E, int x, int y);
 void deplacer_alea(entite *E);
 void animer_entite(entite *E);
 void afficher_entite(entite *E, SDL_Surface *screen,background b);
@@ -84,4 +84,12 @@ void initialiser_hearts(heart hearts[], int n);
 void animer_hearts(heart hearts[], int n);
 void hearts_interaction(heart hearts[],int n,hero *h);
 void afficher_hearts(heart hearts[], int n, background b, SDL_Surface *ecran);
+
+void initialiser_ennemies(entite tab[], int n);
+void animer_ennemies(entite tab[], int n);
+void deplacer_alea_ennemies(entite tab[], int n);
+void attack_ennemies(entite tab[], int n, hero *h);
+void free_ennemies(entite tab[],int n);
+void afficher_ennemies(entite tab[],int n,SDL_Surface *screen,background b);
+
 #endif

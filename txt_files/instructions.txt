@@ -1,6 +1,7 @@
 Press the arrow keys to move around
-Press x to punch and c to kick
+Press X to punch and C to kick
 coins increase your score
 hearts increase your health
 use the moving platforms
+Press Y to save your progress
 
