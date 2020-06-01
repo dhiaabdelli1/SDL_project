@@ -13,6 +13,25 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	int Jcontinuer = 1;
 	int verif = 0;
 
+	int now = 0;
+	int then = 0;
+
+	int j;
+
+	SDL_Surface *portal_frames[15];
+	char image[20];
+
+	for (j = 0; j < 15; j++)
+	{
+		sprintf(image, "../img/portal/%d.png", j + 1);
+		portal_frames[j] = IMG_Load(image);
+		//SDL_SetColorKey(portal_frames[j], SDL_SRCCOLORKEY, SDL_MapRGB(portal_frames[j]->format, 0, 0, 0));
+	}
+	SDL_Rect pos_portal;
+	pos_portal.x = 5087;
+	pos_portal.y = 625;
+	SDL_Rect pos_portal_rel;
+
 	//enigme enigme_m;
 	int nb_platformes = 5;
 	int nb_coins = 5;
@@ -40,6 +59,8 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	int plat_coll;
 
 	SDL_Surface *black = NULL;
+
+	int portal_number = 0;
 
 	SDL_Rect position_black;
 	position_black.x = 0;
@@ -106,7 +127,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 		}
 
 		//portal
-		if (safwen->position.x >= 5100 && safwen->position.x <= 5340 && safwen->position.y >= 1100 && safwen->position.y <= 1150)
+		if (safwen->position.x >= 5100 && safwen->position.x <= 5340 && safwen->position.y >= 1070 && safwen->position.y <= 1120)
 		{
 			safwen->position.x += 1200;
 			safwen->position.y += 600;
@@ -200,9 +221,13 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 		}
 		afficher_hero(*safwen, ecran, background);
 
-		pos_rel.x = background.pos_foreground.x - background.posCamera.x - 400;
-		pos_rel.y = background.pos_foreground.x - background.posCamera.y - 400;
-		SDL_BlitSurface(background.foreground, NULL, ecran, &pos_rel);
+		//pos_rel.x = background.pos_foreground.x - background.posCamera.x - 400;
+		//pos_rel.y = background.pos_foreground.x - background.posCamera.y - 400;
+		//SDL_BlitSurface(background.foreground, NULL, ecran, &pos_rel);
+		pos_portal_rel.x = pos_portal.x - background.posCamera.x;
+		pos_portal_rel.y = pos_portal.y - background.posCamera.y;
+		SDL_BlitSurface(portal_frames[portal_number], NULL, ecran, &pos_portal_rel);
+
 		afficher_dialogue(dialogue, ecran);
 		show_time(&timer, ecran);
 		SDL_BlitSurface(black, NULL, ecran, &position_black);
@@ -229,7 +254,22 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			minimap.pos_image.y = 0;
 		}
 
-		afficher_minimap(&minimap, *safwen, ecran,mini);
+		if (portal_number < 15)
+		{
+			now = SDL_GetTicks();
+			if (now - then > 30)
+			{
+				portal_number++;
+				then = now;
+			}
+		}
+
+		else
+		{
+			portal_number = 0;
+		}
+
+		afficher_minimap(&minimap, *safwen, ecran, mini);
 		SDL_Flip(ecran);
 
 		printf("safwen: (%d;%d)\n", safwen->position.x, safwen->position.y);
