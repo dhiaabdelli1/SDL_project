@@ -13,24 +13,6 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	int Jcontinuer = 1;
 	int verif = 0;
 
-	int now = 0;
-	int then = 0;
-
-	int j;
-
-	SDL_Surface *portal_frames[15];
-	char image[20];
-
-	for (j = 0; j < 15; j++)
-	{
-		sprintf(image, "../img/portal/%d.png", j + 1);
-		portal_frames[j] = IMG_Load(image);
-		//SDL_SetColorKey(portal_frames[j], SDL_SRCCOLORKEY, SDL_MapRGB(portal_frames[j]->format, 0, 0, 0));
-	}
-	SDL_Rect pos_portal;
-	pos_portal.x = 5087;
-	pos_portal.y = 625;
-	SDL_Rect pos_portal_rel;
 
 	//enigme enigme_m;
 	int nb_platformes = 5;
@@ -55,6 +37,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	heart hearts[nb_hearts];
 	timer timer;
 	minimap minimap;
+	portal portal;
 
 	int plat_coll;
 
@@ -71,6 +54,8 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	initialiser_background(&background);
 	initialiser_ennemies(ennemies, nb_ennemies);
 	initialiser_minimap(&minimap, background, *safwen);
+
+	initialiser_portal(&portal);
 
 	initialiser_plats(platformes, nb_platformes);
 
@@ -189,6 +174,7 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 		animer_coins(coins, nb_coins);
 		animer_hearts(hearts, nb_hearts);
 		animer_platformes(platformes, nb_platformes);
+		animer_portal(&portal);
 
 		afficher_background(&background, ecran);
 		afficher_platformes(platformes, background, ecran, nb_platformes);
@@ -220,13 +206,8 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			}
 		}
 		afficher_hero(*safwen, ecran, background);
+		afficher_portal(portal,background,*safwen,ecran);
 
-		//pos_rel.x = background.pos_foreground.x - background.posCamera.x - 400;
-		//pos_rel.y = background.pos_foreground.x - background.posCamera.y - 400;
-		//SDL_BlitSurface(background.foreground, NULL, ecran, &pos_rel);
-		pos_portal_rel.x = pos_portal.x - background.posCamera.x;
-		pos_portal_rel.y = pos_portal.y - background.posCamera.y;
-		SDL_BlitSurface(portal_frames[portal_number], NULL, ecran, &pos_portal_rel);
 
 		afficher_dialogue(dialogue, ecran);
 		show_time(&timer, ecran);
@@ -254,20 +235,6 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 			minimap.pos_image.y = 0;
 		}
 
-		if (portal_number < 15)
-		{
-			now = SDL_GetTicks();
-			if (now - then > 30)
-			{
-				portal_number++;
-				then = now;
-			}
-		}
-
-		else
-		{
-			portal_number = 0;
-		}
 
 		afficher_minimap(&minimap, *safwen, ecran, mini);
 		SDL_Flip(ecran);
@@ -283,4 +250,5 @@ void jeu(SDL_Surface *ecran, etat *etat, hero *safwen, parameter *p, character c
 	free_dialogue(&dialogue);
 	free_platformes(platformes, nb_platformes);
 	free_minimap(&minimap);
+	free_portal(&portal);
 }

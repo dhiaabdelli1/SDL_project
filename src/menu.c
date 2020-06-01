@@ -1,7 +1,9 @@
 #include "menu.h"
 #include "background.h"
 
+
 #define SIZE 100
+#define TIME 30
 
 void play_credits(SDL_Surface *screen, etat *etat, parameter p)
 {
@@ -1387,6 +1389,9 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 	SDL_Rect positionClic;
 	text text;
 
+	SDL_Surface *rotation = NULL;
+	SDL_Rect rect;
+
 	button buttons[6];
 
 	buttons[PLAY].image = IMG_Load("../img/menu/buttons/buttonPlay.png");
@@ -1746,6 +1751,7 @@ void menu(SDL_Surface *screen, etat *etat, parameter *p)
 			t++;
 		}
 		//fin animation
+
 		SDL_BlitSurface(backgroundP, NULL, screen, &positionBackgroundP);
 		for (choice = 0; choice < 5; choice++)
 		{

@@ -279,3 +279,4 @@ void free_instructions(text instructions[], int n)
 		TTF_CloseFont(instructions[i].font);
 	}
 }
+

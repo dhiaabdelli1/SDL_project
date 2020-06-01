@@ -9,7 +9,7 @@ else
 endif
 
 EXEC=game
-SDL_FLAGS=-lSDL -lSDL_image -lSDL_mixer -lSDL_ttf -ggdb
+SDL_FLAGS=-lSDL -lSDL_image -lSDL_mixer -lSDL_ttf -lm -ldl -ggdb 
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
 

@@ -601,7 +601,7 @@ void initialiser_minimap(minimap *m, background b, hero h)
 	m->pos_image.x = (SCREEN_WIDTH / 2) - (m->image->w / 2);
 	m->pos_image.y = 0;
 	m->pos_hero.x = (SCREEN_WIDTH / 2) - (m->image->w / 2) + h.position.x / 52;
-	m->pos_hero.y = (h.position.y / 52)-2;
+	m->pos_hero.y = (h.position.y / 52) - 2;
 }
 
 void afficher_minimap(minimap *m, hero h, SDL_Surface *screen, int mini)
@@ -609,9 +609,9 @@ void afficher_minimap(minimap *m, hero h, SDL_Surface *screen, int mini)
 	if (mini == 1)
 	{
 		m->pos_hero.x = (SCREEN_WIDTH / 2) - (m->image->w / 2) + h.position.x / 52;
-		m->pos_hero.y = (h.position.y / 52)-2;
+		m->pos_hero.y = (h.position.y / 52) - 2;
 	}
-	else if (mini==-1)
+	else if (mini == -1)
 	{
 		m->pos_hero.x = (SCREEN_WIDTH / 2) - (m->image->w / 2) + h.position.x / 13.5;
 		m->pos_hero.y = (h.position.y / 13.5);
@@ -625,4 +625,96 @@ void free_minimap(minimap *m)
 {
 	SDL_FreeSurface(m->image);
 	SDL_FreeSurface(m->hero);
+}
+
+void initialiser_portal(portal *p)
+{
+	int j;
+	char image[20];
+	p->still[0] = IMG_Load("../img/portal_2/1.png");
+	p->still[1] = IMG_Load("../img/portal_2/2.png");
+	p->still[2] = IMG_Load("../img/portal_2/3.png");
+	p->still[3] = IMG_Load("../img/portal_2/4.png");
+
+	for (j = 0; j < 15; j++)
+	{
+		sprintf(image, "../img/portal/%d.png", j + 1);
+		p->enter[j] = IMG_Load(image);
+	}
+
+	p->pos_still.x = 5075;
+	p->pos_still.y = 1020;
+
+	p->pos_enter.x = 5087;
+	p->pos_enter.y = 600;
+
+	p->frame_still = 0;
+	p->frame_enter = 0;
+}
+
+void animer_portal(portal *p)
+{
+	static int now = 0;
+	static int now_2 = 0;
+	static int then = 0;
+	static int then_2;
+
+	if (p->frame_still < 4)
+	{
+		now = SDL_GetTicks();
+		if (now - then > 60)
+		{
+			p->frame_still++;
+			then = now;
+		}
+	}
+
+	else
+	{
+		p->frame_still = 0;
+	}
+
+	if (p->frame_enter < 14)
+	{
+		now_2 = SDL_GetTicks();
+		if (now_2 - then > 60)
+		{
+			p->frame_enter++;
+			then_2 = now_2;
+		}
+	}
+
+	else
+	{
+		p->frame_enter = 0;
+	}
+}
+
+void afficher_portal(portal p, background b, hero h, SDL_Surface *screen)
+{
+	SDL_Rect pos_rel;
+
+	pos_rel.x = p.pos_still.x - b.posCamera.x;
+	pos_rel.y = p.pos_still.y - b.posCamera.y;
+	SDL_BlitSurface(p.still[p.frame_still], NULL, screen, &pos_rel);
+
+	if (h.position.x >= 5100 && h.position.x <= 5340 && h.position.y >= 800 && h.position.y <= 1120)
+	{
+		pos_rel.x = p.pos_enter.x - b.posCamera.x;
+		pos_rel.y = p.pos_enter.y - b.posCamera.y;
+		SDL_BlitSurface(p.enter[p.frame_enter], NULL, screen, &pos_rel);
+	}
+}
+
+void free_portal(portal *p)
+{
+	int i;
+	for (i=0;i<p->frame_enter;i++)
+	{
+		SDL_FreeSurface(p->enter[i]);
+	}
+	for (i=0;i<p->frame_still;i++)
+	{
+		SDL_FreeSurface(p->still[i]);
+	}
 }

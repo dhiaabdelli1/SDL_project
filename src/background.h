@@ -60,6 +60,13 @@ typedef struct Minimap
 	SDL_Rect pos_image,pos_hero;
 }minimap;
 
+typedef struct Portal
+{
+	SDL_Surface *still[4],*enter[15];
+	SDL_Rect pos_enter,pos_still;
+	int frame_still,frame_enter;
+}portal;
+
 //background
 void scrolling(background *b, SDL_Event event);
 void initialiser_background(background *b);
@@ -93,5 +100,7 @@ void show_time(timer *t, SDL_Surface *screen);
 void afficher_temps(text *t, timer *timer, SDL_Surface *ecran);
 
 void free_param(parameter *p);
+
+
 
 #endif

@@ -96,5 +96,9 @@ void initialiser_minimap(minimap *m,background b, hero h);
 void afficher_minimap(minimap *m, hero h,SDL_Surface *screen,int mini);
 void free_minimap(minimap *m);
 
+void initialiser_portal(portal *p);
+void animer_portal(portal *p);
+void afficher_portal(portal p, background b, hero h, SDL_Surface *screen);
+void free_portal(portal *p);
 
 #endif
