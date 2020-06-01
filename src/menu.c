@@ -216,83 +216,110 @@ void cheat(SDL_Surface *ecran, etat *etat, parameter p)
 				case SDLK_BACKSPACE:
 					entry_char[strlen(entry_char) - 1] = '\0';
 					break;
+
 				case SDLK_a:
-					strcat(entry_char, "a");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "a");
 					break;
 				case SDLK_b:
-					strcat(entry_char, "b");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "b");
 					break;
 				case SDLK_c:
-					strcat(entry_char, "c");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "c");
 					break;
 				case SDLK_d:
-					strcat(entry_char, "d");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "d");
 					break;
 				case SDLK_e:
-					strcat(entry_char, "e");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "e");
 					break;
 				case SDLK_f:
-					strcat(entry_char, "f");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "f");
 					break;
 				case SDLK_g:
-					strcat(entry_char, "g");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "g");
 					break;
 				case SDLK_h:
-					strcat(entry_char, "h");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "h");
 					break;
 				case SDLK_i:
-					strcat(entry_char, "i");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "i");
 					break;
 				case SDLK_j:
-					strcat(entry_char, "j");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "j");
 					break;
 				case SDLK_k:
-					strcat(entry_char, "k");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "k");
 					break;
 				case SDLK_l:
-					strcat(entry_char, "l");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "l");
 					break;
 				case SDLK_m:
-					strcat(entry_char, "m");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "m");
 					break;
 				case SDLK_n:
-					strcat(entry_char, "n");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "n");
 					break;
 				case SDLK_o:
-					strcat(entry_char, "o");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "o");
 					break;
 				case SDLK_p:
-					strcat(entry_char, "p");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "p");
 					break;
 				case SDLK_q:
-					strcat(entry_char, "q");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "q");
 					break;
 				case SDLK_r:
-					strcat(entry_char, "r");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "r");
 					break;
 				case SDLK_s:
-					strcat(entry_char, "s");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "s");
 					break;
 				case SDLK_t:
-					strcat(entry_char, "t");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "t");
 					break;
 				case SDLK_u:
-					strcat(entry_char, "u");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "u");
 					break;
 				case SDLK_v:
-					strcat(entry_char, "v");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "v");
 					break;
 				case SDLK_w:
-					strcat(entry_char, "w");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "w");
 					break;
 				case SDLK_x:
-					strcat(entry_char, "x");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "x");
 					break;
 				case SDLK_y:
-					strcat(entry_char, "y");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "y");
 					break;
 				case SDLK_z:
-					strcat(entry_char, "z");
+					if (strlen(entry_char) < 7)
+						strcat(entry_char, "z");
 					break;
 				}
 				entry.text = TTF_RenderText_Blended(entry.font, entry_char, entry.color);
